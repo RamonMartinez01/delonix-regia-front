@@ -2,14 +2,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LoginForm } from '../features/auth/components/LoginForm';
 
-// --- Stubs Temporales (Marcadores de posición) ---
-const LoginStub = () => (
-  <div className="flex flex-col items-center justify-center h-full">
-    <h1 className="text-3xl font-bold text-emerald-400">Portal de Acceso</h1>
-    <p className="text-slate-400 mt-2">Pantalla de Login (Fase Auth en construcción)</p>
-  </div>
-);
-
 // --- Stubs Temporales (Marcadores de Posición) ---
 const DashboardStub = () => (
   <div className="flex flex-col items-center justify-center h-full">
