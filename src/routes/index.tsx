@@ -1,6 +1,7 @@
 // src/routes/index.tsx
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LoginForm } from '../features/auth/components/LoginForm';
+import { ProtectedRoute } from './ProtectedRoute';
 
 // --- Stubs Temporales (Marcadores de Posición) ---
 const DashboardStub = () => (
@@ -28,9 +29,19 @@ export const router = createBrowserRouter([
       ),
   },
   {
+    // 2. La ruta raíz ahora es dueña del Guardia
     path: '/',
-    element: <DashboardStub />,
-    // Nota: Más adelante, esta ruta se convertirá en un "Layout Protegido"
+    element: <ProtectedRoute />,
+    // 3. Todo lo que esté aquí adentro ESTÁ PROTEGIDO
+    children: [
+      {
+        path: '', // Coincide exactamente con '/'
+        element: <DashboardStub />,
+      },
+      // En el futuro, aquí agregaremos:
+      // { path: 'projects', element: <ProjectsList /> }
+      // { path: 'experiments/:id', element: <ExperimentDetail /> }
+    ]
   },
   {
     path: '*', // El comodín '*' atrapa cualquier URL que no coincida con las anteriores
