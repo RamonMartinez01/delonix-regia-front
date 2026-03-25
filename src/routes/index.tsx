@@ -1,5 +1,6 @@
 // src/routes/index.tsx
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { LoginForm } from '../features/auth/components/LoginForm';
 
 // --- Stubs Temporales (Marcadores de posición) ---
 const LoginStub = () => (
@@ -9,6 +10,7 @@ const LoginStub = () => (
   </div>
 );
 
+// --- Stubs Temporales (Marcadores de Posición) ---
 const DashboardStub = () => (
   <div className="flex flex-col items-center justify-center h-full">
     <h1 className="text-3xl font-bold text-blue-400">Panel de Control MLOps</h1>
@@ -27,7 +29,11 @@ const NotFoundStub = () => (
 export const router = createBrowserRouter([
   {
     path: '/login',
-    element: <LoginStub />,
+    element: (
+        <div className="flex flex-col items-center justify-center h-screen w-full">
+          <LoginForm />
+        </div>
+      ),
   },
   {
     path: '/',
