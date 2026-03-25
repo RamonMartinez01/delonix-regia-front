@@ -2,14 +2,8 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LoginForm } from '../features/auth/components/LoginForm';
 import { ProtectedRoute } from './ProtectedRoute';
+import { Dashboard } from '../features/projects/routes/Dashboard';
 
-// --- Stubs Temporales (Marcadores de Posición) ---
-const DashboardStub = () => (
-  <div className="flex flex-col items-center justify-center h-full">
-    <h1 className="text-3xl font-bold text-blue-400">Panel de Control MLOps</h1>
-    <p className="text-slate-400 mt-2">Aquí vivirán los Proyectos y Experimentos</p>
-  </div>
-);
 
 const NotFoundStub = () => (
   <div className="flex flex-col items-center justify-center h-full">
@@ -36,7 +30,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '', // Coincide exactamente con '/'
-        element: <DashboardStub />,
+        element: <Dashboard />,
       },
       // En el futuro, aquí agregaremos:
       // { path: 'projects', element: <ProjectsList /> }
