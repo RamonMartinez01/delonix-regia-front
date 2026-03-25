@@ -1,7 +1,7 @@
 // src/config/axios.ts
 import axios from 'axios';
+import { getToken } from '../features/auth/utils/token'
 
-// 1. Forjamos la instancia base apuntando a nuestro galeón FastAPI
 const apiClient = axios.create({
   baseURL: 'http://localhost:8000/api', 
   headers: {
@@ -11,14 +11,14 @@ const apiClient = axios.create({
   // pero como usaremos JWT en el header 'Authorization', lo omitimos por ahora.
 });
 
-// 2. Aduana de Salida (Interceptores de Petición)
+// Aduana de Salida (Interceptores de Petición)
 apiClient.interceptors.request.use(
   (config) => {
-    // TODO (Fase Auth): Recuperar el token del almacenamiento seguro.
-    // const token = localStorage.getItem('delonix_jwt');
-    // if (token && config.headers) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+    // Recuperar el token del almacenamiento seguro.
+     const token = getToken();
+     if (token && config.headers) {
+       config.headers.Authorization = `Bearer ${token}`;
+     }
     return config;
   },
   (error) => {
@@ -26,7 +26,7 @@ apiClient.interceptors.request.use(
   }
 );
 
-// 3. Aduana de Entrada (Interceptores de Respuesta)
+// Aduana de Entrada (Interceptores de Respuesta)
 apiClient.interceptors.response.use(
   (response) => {
     // Si la petición fue exitosa (200-299), dejamos pasar los datos intactos

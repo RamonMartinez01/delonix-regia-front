@@ -1,13 +1,15 @@
 // src/features/auth/components/LoginForm.tsx
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLogin } from '../api/login';
+import { setToken } from '../utils/token';
 
 export const LoginForm = () => {
   // Estado local estrictamente para los inputs controlados
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
-  // Extraemos el poder de nuestra mutación
+  const navigate = useNavigate();
   const { mutate, isPending, isError } = useLogin();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -15,7 +17,15 @@ export const LoginForm = () => {
     if (!email || !password) return;
     
     // Disparamos la petición HTTP al backend
-    mutate({ email, password });
+    mutate(
+        { email, password },
+        {
+            onSuccess: (data) => {
+                setToken(data.access_token); // Guardamos el token
+                navigate('/');               // Redirigimos al Dashboard (Ruta raíz)
+            },
+        }
+    );
   };
 
   return (
@@ -41,7 +51,7 @@ export const LoginForm = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           className="w-full p-3 rounded bg-slate-900 border border-slate-600 text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
-          placeholder="penelope@ejemplo.com"
+          placeholder="correo@ejemplo.com"
           required
         />
       </div>
