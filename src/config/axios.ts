@@ -1,6 +1,6 @@
 // src/config/axios.ts
 import axios from 'axios';
-import { getToken } from '../features/auth/utils/token'
+import { getToken, removeToken } from '../features/auth/utils/token'
 
 const apiClient = axios.create({
   baseURL: 'http://localhost:8000/api', 
@@ -33,10 +33,14 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error) => {
-    // TODO (Fase Auth): Capturar errores 401 para hacer un "logout" forzoso
-    // if (error.response?.status === 401) {
-    //    window.location.href = '/login';
-    // }
+    // Si FastAPI nos grita "¡No Autorizado!" (Token expirado o inválido)
+    if (error.response?.status === 401) {
+      removeToken(); // Removemos el token caducado
+
+      // Expulsión dura: Usamos window.location en lugar del navigate de React
+      // para forzar una recarga completa, limpiando toda la caché de memoria y TanStack Query
+      window.location.href = '/login';
+    }
     return Promise.reject(error);
   }
 );
