@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LoginForm } from '../features/auth/components/LoginForm';
 import { ProtectedRoute } from './ProtectedRoute';
 import { Dashboard } from '../features/projects/routes/Dashboard';
+import { ProjectDetail } from '../features/projects/routes/ProjectDetail';
 
 
 const NotFoundStub = () => (
@@ -32,8 +33,11 @@ export const router = createBrowserRouter([
         path: '', // Coincide exactamente con '/'
         element: <Dashboard />,
       },
+      {
+        path: 'projects/:projectId',
+        element: <ProjectDetail />,
+      },
       // En el futuro, aquí agregaremos:
-      // { path: 'projects', element: <ProjectsList /> }
       // { path: 'experiments/:id', element: <ExperimentDetail /> }
     ]
   },
