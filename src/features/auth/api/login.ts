@@ -32,7 +32,6 @@ export const useLogin = () => {
     mutationFn: loginWithEmailAndPassword,
     onSuccess: (data) => {
       // Cuando la mutación sea exitosa, por ahora solo veremos el token en consola.
-      // En el siguiente paso atómico, aquí inyectaremos el token en localStorage.
       console.log('Token recibido de FastAPI:', data.access_token);
     },
   });
