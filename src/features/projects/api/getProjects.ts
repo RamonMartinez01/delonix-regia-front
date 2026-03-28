@@ -7,7 +7,7 @@ import type { Project } from '../types';
  * Función pura que hace la petición HTTP GET al backend.
  */
 export const getProjects = async (): Promise<Project[]> => {
-  // La URL base ya es http://localhost:8000/api, así que solo pedimos /projects
+  // La URL base ya es la que tenemos en apiClient, así que solo pedimos /projects
   const response = await apiClient.get<Project[]>('/projects');
   return response.data;
 };
