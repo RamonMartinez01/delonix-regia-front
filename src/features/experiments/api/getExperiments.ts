@@ -35,7 +35,7 @@ export const useExperiments = (projectId: string) => {
 
       // Buscamos si ALGÚN experimento está encolado o corriendo
       const hasActiveExperiments = experiments.some(
-        (exp) => exp.status === 'queued' || exp.status === 'running'
+        (exp) => exp.status === 'queued' || exp.status === 'processing'
       );
 
       // Si hay actividad, refrescamos cada 5000ms (5 segundos). 
