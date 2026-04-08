@@ -1,7 +1,8 @@
 // src/config/axios.ts
 import axios from 'axios';
-import { getToken, removeToken } from '../features/auth/utils/token'
-import { getActiveWorkspace, removeActiveWorkspace } from '../features/workspaces/utils/workspace';
+import { getToken } from '../features/auth/utils/token'
+//import { removeActiveWorkspace } from '../features/workspaces/utils/workspace';
+import { useAuthStore } from '../stores/authStore';
 
 const apiClient = axios.create({
   baseURL: 'http://localhost:8000/api', 
@@ -21,7 +22,8 @@ apiClient.interceptors.request.use(
        config.headers.Authorization = `Bearer ${token}`;
      }
 
-     const workspaceId = getActiveWorkspace();
+     // ZUSTAND: Con esto leemos el store fuera de React
+     const workspaceId = useAuthStore.getState().activeWorkspaceId;
      if (workspaceId && config.headers) {
        config.headers['X-Workspace-ID'] = workspaceId;
      }
@@ -35,18 +37,14 @@ apiClient.interceptors.request.use(
 
 // Aduana de Entrada (Interceptores de Respuesta)
 apiClient.interceptors.response.use(
-  (response) => {
-    // Si la petición fue exitosa (200-299), dejamos pasar los datos intactos
-    return response;
-  },
+  (response) => response,
   (error) => {
     // Si FastAPI nos grita "¡No Autorizado!" (Token expirado o inválido)
     if (error.response?.status === 401) {
-      removeToken(); // Removemos el token caducado
-      removeActiveWorkspace(); // Limpiamos también el rastro del workspace
+      // 1. Ejecutamos la rutina de limpieza total desde nuestro store
+      useAuthStore.getState().logout();
 
-      // Expulsión dura: Usamos window.location en lugar del navigate de React
-      // para forzar una recarga completa, limpiando toda la caché de memoria y TanStack Query
+      // 2. Expulsión dura
       window.location.href = '/login';
     }
     return Promise.reject(error);

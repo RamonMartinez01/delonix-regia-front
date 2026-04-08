@@ -1,7 +1,7 @@
-
 // src/features/auth/api/login.ts
 import { useMutation } from '@tanstack/react-query';
-import apiClient from '../../../config/axios'
+import apiClient from '../../../config/axios';
+import { setToken } from '../utils/token'; // <-- 1. Importamos la utilidad de almacenamiento
 import type { LoginCredentials, TokenResponse } from '../types';
 
 /**
@@ -9,7 +9,6 @@ import type { LoginCredentials, TokenResponse } from '../types';
  * Convierte las credenciales al formato form-urlencoded exigido por FastAPI OAuth2.
  */
 export const loginWithEmailAndPassword = async (credentials: LoginCredentials): Promise<TokenResponse> => {
-  // Transformamos el JSON a Form Data (OAuth2 requiere 'username', así que mapeamos el email)
   const formData = new URLSearchParams();
   formData.append('username', credentials.email); 
   formData.append('password', credentials.password);
@@ -31,8 +30,17 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: loginWithEmailAndPassword,
     onSuccess: (data) => {
-      // Cuando la mutación sea exitosa, por ahora solo veremos el token en consola.
-      console.log('Token recibido de FastAPI:', data.access_token);
+      // 1. Guardamos el pasaporte en la caja fuerte (localStorage)
+      setToken(data.access_token);
+      
+      // 2. Reignición del sistema: 
+      // Forzamos una recarga completa hacia la raíz. Esto garantiza que la caché de 
+      // TanStack Query empiece limpia y que el AuthBootstrapper monte el estado de hidratación.
+      window.location.href = '/';
     },
+    onError: (error) => {
+      // Opcional pero recomendado: Dejar un registro si las credenciales fallan
+      console.error('Fallo en el protocolo de inicio de sesión:', error);
+    }
   });
 };
