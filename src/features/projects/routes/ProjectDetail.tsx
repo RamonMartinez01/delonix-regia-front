@@ -1,11 +1,16 @@
-// src/features/projects/routes/ProjectDetail.tsx   
+// src/features/projects/routes/ProjectDetail.tsx  
+import { useState } from "react"; 
 import { useParams, Link } from "react-router-dom";
 import { ExperimentList } from "../../experiments/components/ExperimentList";
+import { CreateExperimentModal } from "../../experiments/components/CreateExperimentModal";
 
 export const ProjectDetail = () => {
 
     // Extrae el ID dinámico de la URL
     const { projectId } = useParams<{ projectId: string }>();
+
+    // Estado para controlar el modal CreateExperimentModla
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Escudo defensivo por si la URL está malformada
     if (!projectId) {
@@ -39,7 +44,9 @@ export const ProjectDetail = () => {
                 </p>
               </div>
               
-              <button className="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-blue-900/20">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-500 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-blue-900/20">
                 + Nuevo Experimento
               </button>
             </header>
@@ -53,6 +60,13 @@ export const ProjectDetail = () => {
               {/* 2. Inyectamos nuestra tabla inteligente pasándole el ID */}
               <ExperimentList projectId={projectId} />
             </main>
+
+            {/* Modal - abre con el botón '+ Nuevo Experimento'*/}
+            <CreateExperimentModal 
+              isOpen={isModalOpen} 
+              onClose={() => setIsModalOpen(false)} 
+              projectId={projectId} 
+            />
           </div>
         </div>
       );
