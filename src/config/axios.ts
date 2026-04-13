@@ -5,7 +5,7 @@ import { getToken } from '../features/auth/utils/token'
 import { useAuthStore } from '../stores/authStore';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8000/api', 
+  baseURL: 'https://api-delonix.lux-geneve.com/api', 
   headers: {
     'Content-Type': 'application/json',
   },
