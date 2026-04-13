@@ -5,6 +5,8 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { Dashboard } from '../features/projects/routes/Dashboard';
 import { ProjectDetail } from '../features/projects/routes/ProjectDetail';
 import { AuthBootstrapper } from '../features/auth/components/AuthBootstrapper';
+import { ExperimentDetail } from '../features/experiments/routes/ExperimentDetail';
+import { DeploymentDetail } from '../features/deployments/routes/DeploymentDetail';
 
 
 const NotFoundStub = () => (
@@ -38,8 +40,14 @@ export const router = createBrowserRouter([
         path: 'projects/:projectId',
         element: <ProjectDetail />,
       },
-      // En el futuro, aquí agregaremos:
-      // { path: 'experiments/:id', element: <ExperimentDetail /> }
+      {
+        path: 'projects/:projectId/experiments/:experimentId', 
+        element: <ExperimentDetail />
+      },
+      {
+        path: 'projects/:projectId/deployments/:deploymentId',
+        element: <DeploymentDetail />
+      }
     ]
   },
   {

@@ -1,6 +1,7 @@
 // src/features/experiments/components/ExperimentList.tsx
 import { useExperiments } from '../api/getExperiments';
 import type { ExperimentStatus } from '../types';
+import { useNavigate } from 'react-router-dom';
 
 // 1. Componente de Presentación Puro
 const StatusBadge = ({ status }: { status: ExperimentStatus }) => {
@@ -32,6 +33,8 @@ interface ExperimentListProps {
 
 export const ExperimentList = ({ projectId }: ExperimentListProps) => {
   const { data: experiments, isLoading, isError } = useExperiments(projectId);
+  const navigate = useNavigate(); // hook para navegar a ExperimentDetail
+  
 
   if (isLoading) {
     return (
@@ -75,7 +78,10 @@ export const ExperimentList = ({ projectId }: ExperimentListProps) => {
         </thead>
         <tbody className="divide-y divide-slate-700/50 bg-slate-800/30">
           {experiments.map((exp) => (
-            <tr key={exp.id} className="hover:bg-slate-700/30 transition-colors">
+            <tr key={exp.id} 
+              className="hover:bg-slate-700/50 transition-colors cursor-pointer"
+              onClick={() => navigate(`/projects/${projectId}/experiments/${exp.id}`)}
+            >
               <td className="px-6 py-4">
                 <div className="font-medium text-slate-200">{exp.name || 'Sin nombre'}</div>
                 <div className="text-xs text-slate-500 font-mono mt-1">ID: {exp.id.split('-')[0]}</div>
