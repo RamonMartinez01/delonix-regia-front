@@ -7,6 +7,7 @@ import { ProjectDetail } from '../features/projects/routes/ProjectDetail';
 import { AuthBootstrapper } from '../features/auth/components/AuthBootstrapper';
 import { ExperimentDetail } from '../features/experiments/routes/ExperimentDetail';
 import { DeploymentDetail } from '../features/deployments/routes/DeploymentDetail';
+import { AcceptInvitation } from '../features/invitations/routes/AcceptInvitation';
 
 
 const NotFoundStub = () => (
@@ -25,6 +26,12 @@ export const router = createBrowserRouter([
           <LoginForm />
         </div>
       ),
+  },
+  
+  // La Alfombra Roja: Esta es la ruta por la que llegan los invitados
+  {
+    path: '/invite',
+    element: <AcceptInvitation />,
   },
   {
     // 2. La ruta raíz ahora es dueña del Guardia
