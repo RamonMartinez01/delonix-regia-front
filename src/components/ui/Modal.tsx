@@ -19,7 +19,7 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
         
         {/* Header del Modal */}
         <div className="flex justify-between items-center p-6 border-b border-slate-700">
-          <h2 className="text-xl font-bold text-white">{title}</h2>
+          <h2 className="text-xl font-bold text-emerald-400">{title}</h2>
           <button 
             onClick={onClose}
             className="text-slate-400 hover:text-white transition-colors"
