@@ -141,7 +141,7 @@ export const CreateInvitationForm = ({ onSuccess }: CreateInvitationFormProps) =
         )}
         {role === 'engineer' && (
           <div className="bg-slate-900/80 border border-slate-700/50 p-3 rounded-lg text-sm text-slate-400 animate-in fade-in zoom-in duration-200">
-            <strong className="text-slate-300">Técnico / Científico de Datos:</strong> Tiene permisos de lectura y escritura dentro del proyecto asignado. Puede experimentos y desplegar modelos. Sin acceso a facturación ni gestión de usuarios.
+            <strong className="text-slate-300">Ingeniero / Científico de Datos:</strong> Tiene permisos de lectura y escritura dentro del proyecto asignado. Puede realizar experimentos y desplegar modelos. Sin acceso a facturación ni gestión de usuarios.
           </div>
         )}
       </div>
