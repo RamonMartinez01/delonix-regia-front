@@ -8,9 +8,9 @@ import { AuthBootstrapper } from '../features/auth/components/AuthBootstrapper';
 import { ExperimentDetail } from '../features/experiments/routes/ExperimentDetail';
 import { DeploymentDetail } from '../features/deployments/routes/DeploymentDetail';
 import { AcceptInvitation } from '../features/invitations/routes/AcceptInvitation';
-import { VHubLayout } from '../features/valitation/routes/VHubLayout';
-import { VHubDashboard } from '../features/valitation/routes/VHubDashboard'
-import { VHubPlayground } from '../features/valitation/routes/VHubPlayground';
+import { VHubLayout } from '../features/validation/routes/VHubLayout';
+import { VHubDashboard } from '../features/validation/routes/VHubDashboard'
+import { VHubPlayground } from '../features/validation/routes/VHubPlayground';
 
 
 const NotFoundStub = () => (
