@@ -8,6 +8,9 @@ import { AuthBootstrapper } from '../features/auth/components/AuthBootstrapper';
 import { ExperimentDetail } from '../features/experiments/routes/ExperimentDetail';
 import { DeploymentDetail } from '../features/deployments/routes/DeploymentDetail';
 import { AcceptInvitation } from '../features/invitations/routes/AcceptInvitation';
+import { VHubLayout } from '../features/validation/routes/VHubLayout';
+import { VHubDashboard } from '../features/validation/routes/VHubDashboard'
+import { VHubPlayground } from '../features/validation/routes/VHubPlayground';
 
 
 const NotFoundStub = () => (
@@ -21,49 +24,70 @@ const NotFoundStub = () => (
 export const router = createBrowserRouter([
   {
     path: '/login',
-    element: (
-        <div className="flex flex-col items-center justify-center h-screen w-full">
-          <LoginForm />
-        </div>
-      ),
+    element: <div className="flex flex-col items-center justify-center h-screen w-full"><LoginForm /></div>,
   },
-  
-  // La Alfombra Roja: Esta es la ruta por la que llegan los invitados
   {
     path: '/invite',
     element: <AcceptInvitation />,
   },
+  
+  // ==========================================
+  // REINO 1: EL DASHBOARD DE PENÉLOPE (Ingenieros y Owners)
+  // ==========================================
   {
-    // 2. La ruta raíz ahora es dueña del Guardia
     path: '/',
-    element: <ProtectedRoute />,
-    // 3. Todo lo que esté aquí adentro ESTÁ PROTEGIDO
+    // Si Azul (member) intenta entrar aquí, la expulsamos a /v-hub
+    element: <ProtectedRoute allowedRoles={['owner', 'engineer']} fallbackPath="/v-hub" />,
+    children: [
+      { path: '', element: <Dashboard /> },
+      { path: 'projects/:projectId', element: <ProjectDetail /> },
+      { path: 'projects/:projectId/experiments/:experimentId', element: <ExperimentDetail /> },
+      { path: 'projects/:projectId/deployments/:deploymentId', element: <DeploymentDetail /> }
+    ]
+  },
+
+  // ==========================================
+  // REINO 2: EL VALIDATION HUB DE AZUL (Stakeholders)
+  // ==========================================
+  {
+    path: '/v-hub',
+    // Si un ingeniero sin permisos entra, lo devolvemos a su dashboard
+    element: <ProtectedRoute allowedRoles={['member']} fallbackPath="/" />,
     children: [
       {
-        path: '', // Coincide exactamente con '/'
-        element: <Dashboard />,
-      },
-      {
-        path: 'projects/:projectId',
-        element: <ProjectDetail />,
-      },
-      {
-        path: 'projects/:projectId/experiments/:experimentId', 
-        element: <ExperimentDetail />
-      },
-      {
-        path: 'projects/:projectId/deployments/:deploymentId',
-        element: <DeploymentDetail />
+        path: '', // Coincide con /v-hub
+        element: <VHubLayout />,
+        children: [
+          { path: '', element: <VHubDashboard /> },
+          // En el futuro agregaremos aquí la "Arena de Pruebas":
+          // { path: 'project/:projectId', element: <VHubPlayground /> }
+        ]
       }
     ]
   },
+
   {
-    path: '*', // El comodín '*' atrapa cualquier URL que no coincida con las anteriores
+  path: '/v-hub',
+  element: <ProtectedRoute allowedRoles={['member']} fallbackPath="/" />,
+  children: [
+    {
+      path: '',
+      element: <VHubLayout />,
+      children: [
+        { path: '', element: <VHubDashboard /> },
+        // AGREGAMOS ESTA RUTA
+        { path: 'project/:projectId', element: <VHubPlayground /> }
+      ]
+    }
+  ]
+},
+
+  {
+    path: '*',
     element: <NotFoundStub />,
   }
 ]);
 
-// Exportamos el proveedor que inyectaremos en nuestra App
 export function AppRouter() {
   return (
     <AuthBootstrapper>
