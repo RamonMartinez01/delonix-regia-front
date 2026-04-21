@@ -29,6 +29,7 @@ export interface UserWorkspaceContext {
 // El contrato maestro que devuelve nuestro endpoint GET /api/auth/me
 export interface User {
   id: string;
+  full_name: string;
   email: string;
   created_at: string; // Las fechas ISO-8601 llegan como strings en JSON
   workspaces: UserWorkspaceContext[];
