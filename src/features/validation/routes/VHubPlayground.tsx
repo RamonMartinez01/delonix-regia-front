@@ -4,7 +4,8 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getProject } from '../../projects/api/getProject'; 
 import { getDeployments } from '../../deployments/api/getDeployments';
-import { InferenceArena } from '../components/InferenceArena'; // Lo crearemos ahora
+import { InferenceArena } from '../components/InferenceArena'; 
+import { FeedbackHistory } from '../components/FeedbackHistory';
 
 export const VHubPlayground = () => {
   const { projectId } = useParams();
@@ -71,7 +72,13 @@ export const VHubPlayground = () => {
         {/* COLUMNA DERECHA: La Arena de Inferencia */}
         <main className="flex-1 w-full">
           {activeDeployment ? (
-            <InferenceArena deployment={activeDeployment} projectDescription={project?.description ?? ""}  /> 
+           <>
+              {/* La zona de pruebas */}
+              <InferenceArena deployment={activeDeployment} projectDescription={project?.description ?? ""}  /> 
+
+              {/* La bitácora histórica */}
+              <FeedbackHistory deploymentId={activeDeployment.id} />
+            </>
           ) : (
             <div className="p-12 border-2 border-dashed border-slate-800 rounded-2xl text-center text-slate-600">
               Selecciona un despliegue para comenzar la validación.

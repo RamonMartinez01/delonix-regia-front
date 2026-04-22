@@ -1,8 +1,9 @@
 // src/features/validation/components/InferenceArena.tsx
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createFeedback } from '../api/feedback';
 import { simulateInference } from '../../deployments/api/infer';
+
 
 
 interface Props {
@@ -17,6 +18,8 @@ export const InferenceArena = ({ deployment, projectDescription }: Props) => {
 
   // para manejar la notificación de UX en lugar del alert()
   const [notification, setNotification] = useState<{type: 'success' | 'error', message: string} | null>(null);
+
+  const queryClient = useQueryClient(); // para la caché del historial de inferencias
 
   // Función auxiliar para mostrar notificaciones efímeras (desaparecen en 3s)
   const showNotification = (type: 'success' | 'error', message: string) => {
@@ -35,6 +38,9 @@ export const InferenceArena = ({ deployment, projectDescription }: Props) => {
       showNotification('success', '¡Evaluación registrada en la bóveda con éxito!');
       setPrediction(null);
       setInputText("");
+
+      // Invalidamos la caché de este despliegue específico
+      queryClient.invalidateQueries({ queryKey: ['feedback-history', deployment.id] });
     },
     onError: () => {
       showNotification('error', 'Error al guardar la evaluación. Intenta de nuevo.');
