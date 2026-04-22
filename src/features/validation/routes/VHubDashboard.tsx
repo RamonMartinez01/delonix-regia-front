@@ -1,7 +1,7 @@
 // src/features/validation/routes/VHubDashboard.tsx
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { getProjects } from '../../projects/api/getProjects'; // Ajusta la ruta si es necesario
+import { getProjects } from '../../projects/api/getProjects';
 
 export const VHubDashboard = () => {
   // Conectamos con el backend usando React Query
