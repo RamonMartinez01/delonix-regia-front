@@ -18,8 +18,6 @@ export const createFeedback = async (
 
 /**
  * AUDITORÍA: Obtenemos el historial de inferencias.
- * (Azul podrá usar esto para ver su historial en el futuro, 
- * y Penélope lo usará en su dashboard).
  */
 export const getFeedbackForDeployment = async (
   deploymentId: string
