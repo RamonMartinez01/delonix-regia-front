@@ -67,7 +67,7 @@ export const ProjectDetail = () => {
                 : 'border-transparent text-slate-500 hover:text-slate-300'
             }`}
           >
-            Escaparates UAT (Despliegues)
+           UAT (Despliegues)
           </button>
         </div>
 

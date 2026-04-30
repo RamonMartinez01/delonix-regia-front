@@ -1,6 +1,7 @@
 // src/features/experiments/components/CreateExperimentModal.tsx
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCreateExperiment } from '../api/createExperiment';
+import { useHubModels } from '../api/getModelsHub';
 
 interface CreateExperimentModalProps {
   isOpen: boolean;
@@ -9,21 +10,35 @@ interface CreateExperimentModalProps {
 }
 
 export const CreateExperimentModal = ({ isOpen, onClose, projectId }: CreateExperimentModalProps) => {
-  // 1. Estados locales del formulario
+  // Estados locales del formulario
   const [name, setName] = useState('');
-  const [modelUri, setModelUri] = useState('hf://distilbert-base-uncased');
+  const [selectedModelId, setSelectedModelId] = useState('');
   const [epochs, setEpochs] = useState(10);
 
-  // 2. Cargamos el misil en el tubo lanzador
+  // Cargamos el misil en el tubo lanzador
+  const { data: models, isLoading: isLoadingModels } = useHubModels();
   const { mutateAsync: createExperiment, isPending } = useCreateExperiment(projectId);
 
-  // 3. La secuencia de ignición
+  // AUTO-SELECCIÓN: Cuando los modelos carguen, seleccionamos el primero por defecto
+  useEffect(() => {
+    if (models && models.length > 0 && !selectedModelId) {
+      setSelectedModelId(models[0].id);
+    }
+  }, [models, selectedModelId]);
+
+  // Buscamos el objeto completo del modelo seleccionado para saber si lo soportamos
+  const selectedModel = models?.find(m => m.id === selectedModelId);
+  const isSupported = selectedModel?.is_supported ?? false;
+
+  // La secuencia de ignición
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!isSupported) return; // Doble candado de seguridad
+
     try {
       await createExperiment({
         name: name || 'Experimento sin nombre',
-        model_source_uri: modelUri,
+        model_source_uri: `hf://${selectedModelId}`, // Formateamos el URI para el backend
         hyperparameters: {
           epochs: epochs,
           batch_size: 32, // Fijo por ahora, para simular realismo
@@ -43,12 +58,10 @@ export const CreateExperimentModal = ({ isOpen, onClose, projectId }: CreateExpe
 
   if (!isOpen) return null;
 
-  // 4. La Interfaz Gráfica (UI)
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="bg-slate-900 border border-slate-700 rounded-xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh]">
         
-        {/* Cabecera del Modal */}
         <div className="flex justify-between items-center px-6 py-4 border-b border-slate-800 bg-slate-800/50">
           <h3 className="text-lg font-bold text-slate-100">Nuevo Entrenamiento</h3>
           <button 
@@ -59,10 +72,8 @@ export const CreateExperimentModal = ({ isOpen, onClose, projectId }: CreateExpe
           </button>
         </div>
 
-        {/* Cuerpo del Formulario */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+        <form onSubmit={handleSubmit} className="p-6 space-y-5 overflow-y-auto">
           
-          {/* Campo: Nombre */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">
               Nombre del Experimento
@@ -77,23 +88,50 @@ export const CreateExperimentModal = ({ isOpen, onClose, projectId }: CreateExpe
             />
           </div>
 
-          {/* Campo: Modelo Base (Select) */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">
               Modelo Base (Arquitectura)
             </label>
             <select
-              value={modelUri}
-              onChange={(e) => setModelUri(e.target.value)}
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:outline-none focus:border-blue-500 transition-colors appearance-none"
+              value={selectedModelId}
+              onChange={(e) => setSelectedModelId(e.target.value)}
+              disabled={isLoadingModels}
+              className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:outline-none focus:border-blue-500 transition-colors appearance-none disabled:opacity-50"
             >
-              <option value="hf://distilbert-base-uncased">DistilBERT (Clasificación de Texto)</option>
-              <option value="hf://meta-llama/Llama-2-7b">Llama 2 7B (Generación de Texto)</option>
-              <option value="s3://delonix-corp/vision-v1">Vision Transformer (Imágenes)</option>
+              {isLoadingModels ? (
+                <option>Sincronizando con el Hub...</option>
+              ) : (
+                models?.map((model) => (
+                  <option key={model.id} value={model.id}>
+                    {model.name} ({model.task_type.replace('_', ' ').toUpperCase()})
+                  </option>
+                ))
+              )}
             </select>
+            
+            {/* Descripción dinámica del modelo seleccionado */}
+            {selectedModel && (
+              <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+                {selectedModel.description}
+              </p>
+            )}
           </div>
 
-          {/* Campo: Hiperparámetros (Epochs) */}
+          {/* 👇 LA MAGIA DE LA DEGRADACIÓN ELEGANTE 👇 */}
+          {selectedModel && !isSupported && (
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 animate-in slide-in-from-top-2">
+              <div className="flex items-start gap-3">
+                <span className="text-amber-500 text-lg leading-none">⚠️</span>
+                <div>
+                  <h4 className="text-sm font-bold text-amber-500 mb-1">Arquitectura en el Astillero</h4>
+                  <p className="text-xs text-amber-400/80 leading-relaxed">
+                    El soporte para modelos de <strong className="text-amber-400 uppercase">{selectedModel.task_type.replace('_', ' ')}</strong> está actualmente en desarrollo. Nuestro motor MVP está optimizado exclusivamente para Clasificación de Textos.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1">
               Iteraciones (Epochs)
@@ -106,12 +144,8 @@ export const CreateExperimentModal = ({ isOpen, onClose, projectId }: CreateExpe
               onChange={(e) => setEpochs(Number(e.target.value))}
               className="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-2.5 text-slate-200 focus:outline-none focus:border-blue-500 transition-colors"
             />
-            <p className="text-xs text-slate-500 mt-1">
-              A mayor número, más tiempo tomará el entrenamiento simulado.
-            </p>
           </div>
 
-          {/* Botonera de Acción */}
           <div className="pt-4 flex justify-end gap-3 border-t border-slate-800">
             <button
               type="button"
@@ -123,8 +157,12 @@ export const CreateExperimentModal = ({ isOpen, onClose, projectId }: CreateExpe
             </button>
             <button
               type="submit"
-              disabled={isPending}
-              className="bg-blue-600 hover:bg-blue-500 text-white px-5 py-2 rounded-lg font-medium transition-colors shadow-lg shadow-blue-900/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              disabled={isPending || !isSupported || isLoadingModels}
+              className={`px-5 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 ${
+                !isSupported 
+                  ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700' 
+                  : 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20'
+              }`}
             >
               {isPending ? (
                 <>
