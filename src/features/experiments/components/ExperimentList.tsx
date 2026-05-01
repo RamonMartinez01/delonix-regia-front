@@ -1,125 +1,76 @@
-// src/features/experiments/components/ExperimentList.tsx
-import { useExperiments } from '../api/getExperiments';
-import type { ExperimentStatus } from '../types';
-import { useNavigate } from 'react-router-dom';
+import { useExperiments } from '../api/getExperiments'; // Ajusta este import a tu gancho real
 
-// 1. Componente de Presentación Puro
-const StatusBadge = ({ status }: { status: ExperimentStatus }) => {
-  const styles: Record<ExperimentStatus, string> = {
-    completed: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
-    processing: 'bg-blue-500/10 text-blue-400 border-blue-500/20 animate-pulse',
-    queued: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-    failed: 'bg-red-500/10 text-red-400 border-red-500/20',
-  };
-
-  const labels: Record<ExperimentStatus, string> = {
-    completed: 'Completado',
-    processing: 'En Ejecución',
-    queued: 'En Cola',
-    failed: 'Fallido',
-  };
-
-  return (
-    <span className={`px-2.5 py-1 rounded-full text-xs font-medium border uppercase tracking-wider ${styles[status]}`}>
-      {labels[status]}
-    </span>
-  );
-};
-
-// 2. Componente Contenedor de la Tabla
+// 1. EL NUEVO CONTRATO DE COMUNICACIÓN
 interface ExperimentListProps {
   projectId: string;
+  selectedId?: string | null; // El padre nos dirá cuál está seleccionado
+  onSelect?: (experimentId: string) => void; // Le avisaremos al padre cuando hagan clic
 }
 
-export const ExperimentList = ({ projectId }: ExperimentListProps) => {
-  const { data: experiments, isLoading, isError } = useExperiments(projectId);
-  const navigate = useNavigate(); // hook para navegar a ExperimentDetail
-  
+export const ExperimentList = ({ projectId, selectedId, onSelect }: ExperimentListProps) => {
+  const { data: experiments, isLoading } = useExperiments(projectId);
 
-  if (isLoading) {
-    return (
-      <div className="space-y-3 mt-6">
-        {[1, 2, 3].map((i) => (
-          <div key={i} className="h-16 bg-slate-800 rounded-lg animate-pulse border border-slate-700"></div>
-        ))}
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="mt-6 p-4 bg-red-900/30 border border-red-500/50 rounded-lg text-red-400 text-sm">
-        Error crítico al intentar recuperar la telemetría del clúster.
-      </div>
-    );
-  }
+  if (isLoading) return <div className="p-4 text-emerald-500 animate-pulse text-sm">Escaneando laboratorio...</div>;
 
   if (!experiments || experiments.length === 0) {
     return (
-      <div className="mt-6 text-center p-12 border border-dashed border-slate-700 rounded-lg bg-slate-800/30">
-        <p className="text-slate-400">No hay experimentos registrados en la bitácora de este proyecto.</p>
-        <p className="text-slate-500 text-sm mt-2">Inicia un nuevo entrenamiento para ver las métricas aquí.</p>
+      <div className="p-8 border-2 border-dashed border-slate-800 rounded-xl text-center text-slate-500 text-sm">
+        No hay modelos forjados en este proyecto.
       </div>
     );
   }
 
-  // 3. Renderizado de la Tabla de Datos Mejorada
+  // Diccionario visual de estados
+  const statusColors: Record<string, string> = {
+    queued: 'bg-amber-500',
+    processing: 'bg-blue-400 animate-pulse',
+    completed: 'bg-emerald-500',
+    failed: 'bg-red-500',
+  };
+
   return (
-    <div className="mt-6 overflow-x-auto rounded-lg border border-slate-700 shadow-xl">
-      <table className="w-full text-left text-sm text-slate-300 whitespace-nowrap">
-        <thead className="text-xs text-slate-400 uppercase bg-slate-800/80 border-b border-slate-700">
-          <tr>
-            <th className="px-6 py-4 font-semibold">Experimento</th>
-            <th className="px-6 py-4 font-semibold">Estado</th>
-            <th className="px-6 py-4 font-semibold">Métricas (Botín)</th> {/* 👇 NUEVA COLUMNA */}
-            <th className="px-6 py-4 font-semibold">Tiempo</th>
-            <th className="px-6 py-4 font-semibold">Modelo Base</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-700/50 bg-slate-800/30">
-          {experiments.map((exp) => (
-            <tr key={exp.id} 
-              className="hover:bg-slate-700/50 transition-colors cursor-pointer"
-              onClick={() => navigate(`/projects/${projectId}/experiments/${exp.id}`)}
-            >
-              <td className="px-6 py-4">
-                <div className="font-medium text-slate-200">{exp.name || 'Sin nombre'}</div>
-                <div className="text-xs text-slate-500 font-mono mt-1">ID: {exp.id.split('-')[0]}</div>
-              </td>
-              <td className="px-6 py-4">
-                <StatusBadge status={exp.status} />
-              </td>
-              {/* 👇 RENDERIZADO DEL BOTÍN */}
-              <td className="px-6 py-4">
-                {exp.metrics ? (
-                  <div className="flex flex-col gap-1">
-                    <span className="text-emerald-400 font-mono text-xs">
-                      Acc: {exp.metrics.accuracy !== undefined
-                        ? `${(exp.metrics.accuracy * 100).toFixed(1)}%`
-                        : '-'}
-                    </span>
-                    <span className="text-amber-400 font-mono text-xs">
-                    Loss: {exp.metrics.loss !== undefined 
-                        ? exp.metrics.loss.toFixed(4) 
-                        : '—'}
-                    </span>
-                  </div>
-                ) : (
-                  <span className="text-slate-500 text-xs italic">Pendiente...</span>
-                )}
-              </td>
-              <td className="px-6 py-4 font-mono text-slate-400">
-                {exp.compute_time_seconds ? `${exp.compute_time_seconds}s` : '—'}
-              </td>
-              <td className="px-6 py-4 text-slate-400">
-                <span className="bg-slate-900 px-2 py-1 rounded text-xs border border-slate-700">
-                  {exp.model_source_uri.replace('hf://', '')}
-                </span>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="flex flex-col gap-3">
+      {experiments.map((exp) => (
+        <button
+          key={exp.id}
+          onClick={() => onSelect && onSelect(exp.id)}
+          className={`p-4 rounded-xl border text-left transition-all duration-300 w-full ${
+            selectedId === exp.id
+              ? 'bg-emerald-500/10 border-emerald-500/50 shadow-lg shadow-emerald-500/5'
+              : 'bg-slate-900 border-slate-800 hover:border-slate-700'
+          }`}
+        >
+          {/* Fila 1: Título y Versión */}
+          <div className="flex justify-between items-start mb-1">
+            <p className={`text-sm font-bold truncate pr-2 ${selectedId === exp.id ? 'text-emerald-400' : 'text-slate-300'}`}>
+              {exp.name || 'Sin nombre'}
+            </p>
+            <span className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-[10px] font-mono text-emerald-400">
+              v{exp.version}
+            </span>
+          </div>
+          
+          {/* Fila 2: Tarea técnica */}
+          <p className="text-[10px] text-slate-500 font-mono mb-3 truncate">
+            {exp.task_type.replace('_', ' ')}
+          </p>
+
+          {/* Fila 3: Estatus y Métrica Rápida */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${statusColors[exp.status] || 'bg-slate-600'}`}></span>
+              <span className="text-[10px] text-slate-400 uppercase font-medium">{exp.status}</span>
+            </div>
+            
+            {/* El botín visual: si está completo, mostramos su precisión directamente en la tarjeta */}
+            {exp.status === 'completed' && exp.metrics?.accuracy !== undefined && (
+              <span className="text-[10px] text-emerald-500 font-bold tracking-wider">
+                ACC: {((exp.metrics.accuracy || 0) * 100).toFixed(1)}%
+              </span>
+            )}
+          </div>
+        </button>
+      ))}
     </div>
   );
 };

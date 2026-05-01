@@ -1,11 +1,16 @@
 // src/features/experiments/routes/ExperimentDetail.tsx
 import { useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useExperiment } from '../api/getExperimentsById';
 import { CreateDeploymentModal } from '../../deployments/components/CreateDeploymentModal';
 
-export const ExperimentDetail = () => {
-  const { projectId, experimentId } = useParams();
+interface ExperimentDetailProps {
+  projectId: string;
+  experimentId: string;
+}
+
+export const ExperimentDetail = ({ projectId, experimentId }: ExperimentDetailProps) => {
+  // Eliminamos el useParams(). Ahora recibimos los IDs directamente de quien nos invoque.
   const navigate = useNavigate();
   const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
 
@@ -24,7 +29,7 @@ export const ExperimentDetail = () => {
   // Estado de carga (Aquí 'experiment' es undefined, entonces no renderizamos el resto)
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-slate-950">
+      <div className="flex min-h-[500px] items-center justify-center bg-slate-900/50 rounded-2xl border border-slate-800">
         <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-500"></div>
       </div>
     );
@@ -34,7 +39,7 @@ export const ExperimentDetail = () => {
   // Evaluamos '!experiment' para asegurarnos de que el objeto llegó a salvo.
   if (error || !experiment) {
     return (
-      <div className="p-6 text-center text-slate-400 bg-slate-950 h-screen">
+      <div className="flex min-h-[500px] flex-col items-center justify-center text-slate-400 bg-slate-900/50 rounded-2xl border border-slate-800 p-6 text-center">
         <p>Error al sintonizar la frecuencia del experimento o datos corruptos.</p>
         <button onClick={() => navigate(-1)} className="mt-4 text-emerald-500 underline">Volver al puerto</button>
       </div>
@@ -53,20 +58,8 @@ export const ExperimentDetail = () => {
   const hasDeployments = experiment.deployments.length > 0;
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 p-6 font-sans">
+    <div className="bg-slate-950 rounded-2xl border border-slate-800 shadow-xl text-slate-200 p-6 lg:p-8 font-sans animate-in fade-in duration-300">
       
-      {/* NAVEGACIÓN SUPERIOR */}
-      <nav className="mb-8 flex items-center gap-4">
-        <button 
-          onClick={() => navigate(`/projects/${projectId}`)}
-          className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400"
-        >
-          Regresar a experimentos
-        </button>
-        <div className="h-4 w-px bg-slate-800"></div>
-        <span className="text-sm text-slate-500">Proyectos / {projectId.slice(0,8)} / Experimento</span>
-      </nav>
-
       {/* ZONA 1: CABECERA (ESTATUS Y ACCIÓN) */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
         <div>
