@@ -5,6 +5,7 @@ import { ExperimentList } from "../../experiments/components/ExperimentList";
 import { ExperimentDetail } from "../../experiments/routes/ExperimentDetail";
 import { CreateExperimentModal } from "../../experiments/components/CreateExperimentModal";
 import { DeploymentList } from "../../deployments/components/DeploymentList"; // <-- Importamos los ladrillos nuevos
+import { DeploymentDetail } from "../../deployments/routes/DeploymentDetail";
 
 // Pestañas de navegación
 type TabType = 'experiments' | 'deployments';
@@ -13,6 +14,7 @@ export const ProjectDetail = () => {
   const { projectId } = useParams<{ projectId: string }>();
 
   const [selectedExperimentId, setSelectedExperimentId] = useState<string | null>(null);
+  const [selectedDeploymentId, setSelectedDeploymentId] = useState<string | null>(null);
   
   // 1. Estados de la interfaz
   const [activeTab, setActiveTab] = useState<TabType>('experiments');
@@ -114,11 +116,37 @@ export const ProjectDetail = () => {
             </div>
           ) : (
             <>
-              <div className="mb-6">
-                <h2 className="text-xl font-bold text-slate-200">Centro de Despliegues</h2>
-                <p className="text-slate-400 text-sm">Gestión de vitrinas activas para Stakeholders.</p>
+              <div className="mb-8 pb-4 border-b border-slate-800/60">
+                <h2 className="text-xl font-bold text-slate-200 tracking-tight">Centro de Despliegues</h2>
+                <p className="text-slate-400 text-sm mt-1">Gestión de vitrinas activas para Stakeholders.</p>
               </div>
-              <DeploymentList projectId={projectId} />
+
+               {/* EL PATRÓN MASTER-DETAIL */}
+              <div className="flex flex-col lg:flex-row gap-8 items-start">
+
+                {/* COLUMNA IZQUIERDA: Maestro (Micro-tarjetas) */}
+                <aside className="w-full lg:w-80 flex-shrink-0">
+                  <DeploymentList
+                      projectId={projectId as string} 
+                      selectedId={selectedDeploymentId}
+                      onSelect={setSelectedDeploymentId}  />
+                </aside>
+
+                 {/* COLUMNA DERECHA: Detalle de Despliegue */}
+                <section className="flex-1 w-full min-w-0">
+                  {selectedDeploymentId ? (
+                    <DeploymentDetail 
+                      deploymentId={selectedDeploymentId} 
+                    />
+                  ) : (
+                    <div className="p-12 border-2 border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center text-slate-500 min-h-[400px]">
+                      <span className="text-4xl mb-4">🔬</span>
+                      <p>Selecciona un despliegue de la lista para inspeccionar su telemetría.</p>
+                    </div>
+                  )}
+                </section>
+
+              </div>
             </>
           )}
         </main>
