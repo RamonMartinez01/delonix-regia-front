@@ -22,7 +22,7 @@ export const DeploymentList = ({ projectId, selectedId, onSelect }: DeploymentLi
   const { data: deployments, isLoading, isError } = useDeployments(projectId);
 
   if (isLoading) {
-    return <div className="p-4 text-emerald-500 animate-pulse text-sm">Escaneando escaparates...</div>;
+    return <div className="p-4 text-emerald-500 animate-pulse text-sm">Sincronizando Despliegues...</div>;
   }
 
   if (isError) {
@@ -32,7 +32,7 @@ export const DeploymentList = ({ projectId, selectedId, onSelect }: DeploymentLi
   if (!deployments || deployments.length === 0) {
     return (
       <div className="p-8 border-2 border-dashed border-slate-800 rounded-xl text-center text-slate-500 text-sm">
-        No hay escaparates UAT activos en este proyecto.
+        No hay entornos UAT activos en este proyecto.
       </div>
     );
   }

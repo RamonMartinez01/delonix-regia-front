@@ -6,6 +6,7 @@ import { getProject } from '../../projects/api/getProject';
 import { getDeployments } from '../../deployments/api/getDeployments';
 import { InferenceArena } from '../components/InferenceArena'; 
 import { FeedbackHistory } from '../components/FeedbackHistory';
+import { DeploymentList } from '../../deployments/components/DeploymentList'; 
 
 export const VHubPlayground = () => {
   const { projectId } = useParams();
@@ -17,6 +18,7 @@ export const VHubPlayground = () => {
     enabled: !!projectId
   });
 
+  // Mantenemos esta consulta activa para la auto-selección y para extraer el objeto completo
   const { data: deployments, isLoading: isLoadingDeps } = useQuery({
     queryKey: ['project-deployments', projectId],
     queryFn: () => getDeployments(projectId!),
@@ -31,7 +33,9 @@ export const VHubPlayground = () => {
     }
   }, [deployments, selectedDeploymentId]);
 
-  if (isLoadingProject || isLoadingDeps) return <div className="p-12 text-center text-emerald-500 animate-pulse">Sincronizando...</div>;
+  if (isLoadingProject || isLoadingDeps) {
+    return <div className="p-12 text-center text-emerald-500 animate-pulse">Sincronizando entorno UAT...</div>;
+  }
 
   const activeDeployment = deployments?.find(d => d.id === selectedDeploymentId);
 
@@ -45,43 +49,39 @@ export const VHubPlayground = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-8 items-start">
-        {/* COLUMNA IZQUIERDA: Micro-Tarjetas */}
-        <aside className="w-full lg:w-80 flex flex-col gap-3">
-          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 px-2">Despliegues Disponibles</h3>
-          {deployments?.map((dep) => (
-            <button
-              key={dep.id}
-              onClick={() => setSelectedDeploymentId(dep.id)}
-              className={`p-4 rounded-xl border text-left transition-all duration-300 ${
-                selectedDeploymentId === dep.id 
-                  ? 'bg-emerald-500/10 border-emerald-500/50 shadow-lg shadow-emerald-500/5' 
-                  : 'bg-slate-900 border-slate-800 hover:border-slate-700'
-              }`}
-            >
-              <p className={`text-sm font-bold mb-1 ${selectedDeploymentId === dep.id ? 'text-emerald-400' : 'text-slate-300'}`}>
-                {dep.name}
-              </p>
-              <div className="flex items-center gap-2">
-                <span className={`w-2 h-2 rounded-full ${dep.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-600'}`}></span>
-                <span className="text-[10px] text-slate-500 uppercase font-medium">{dep.status}</span>
-              </div>
-            </button>
-          ))}
+        
+        {/* COLUMNA IZQUIERDA: Maestro (Micro-tarjetas reutilizadas) */}
+        <aside className="w-full lg:w-80 flex-shrink-0">
+          <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3 px-2">Entornos Disponibles</h3>
+          {/* Aquí inyectamos el componente refactorizado */}
+          <DeploymentList 
+            projectId={projectId as string} 
+            selectedId={selectedDeploymentId} 
+            onSelect={setSelectedDeploymentId} 
+          />
         </aside>
 
         {/* COLUMNA DERECHA: La Arena de Inferencia */}
-        <main className="flex-1 w-full">
+        <main className="flex-1 w-full min-w-0">
           {activeDeployment ? (
-           <>
+           <div className="space-y-8">
               {/* La zona de pruebas */}
-              <InferenceArena deployment={activeDeployment} projectDescription={project?.description ?? ""}  /> 
+              <section>
+                <InferenceArena deployment={activeDeployment} projectDescription={project?.description ?? ""}  /> 
+              </section>
 
               {/* La bitácora histórica */}
-              <FeedbackHistory deploymentId={activeDeployment.id} />
-            </>
+              <section className="bg-slate-900/50 border border-slate-800 rounded-2xl p-6">
+                <h2 className="text-sm font-bold text-slate-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                  <i className="fa-solid fa-users-viewfinder text-blue-400"></i> Auditoría de Stakeholders
+                </h2>
+                <FeedbackHistory deploymentId={activeDeployment.id} />
+              </section>
+            </div>
           ) : (
-            <div className="p-12 border-2 border-dashed border-slate-800 rounded-2xl text-center text-slate-600">
-              Selecciona un despliegue para comenzar la validación.
+            <div className="p-12 border-2 border-dashed border-slate-800 rounded-2xl flex flex-col items-center justify-center text-slate-500 min-h-[400px]">
+              <span className="text-4xl mb-4">🎯</span>
+              <p>Selecciona un despliegue para comenzar la validación.</p>
             </div>
           )}
         </main>
