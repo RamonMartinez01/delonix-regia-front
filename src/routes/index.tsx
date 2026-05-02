@@ -5,13 +5,11 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { Dashboard } from '../features/projects/routes/Dashboard';
 import { ProjectDetail } from '../features/projects/routes/ProjectDetail';
 import { AuthBootstrapper } from '../features/auth/components/AuthBootstrapper';
-import { ExperimentDetail } from '../features/experiments/routes/ExperimentDetail';
-import { DeploymentDetail } from '../features/deployments/routes/DeploymentDetail';
 import { AcceptInvitation } from '../features/invitations/routes/AcceptInvitation';
 import { VHubLayout } from '../features/validation/routes/VHubLayout';
-import { VHubDashboard } from '../features/validation/routes/VHubDashboard'
+import { VHubDashboard } from '../features/validation/routes/VHubDashboard';
 import { VHubPlayground } from '../features/validation/routes/VHubPlayground';
-
+// Importaciones de ExperimentDetail y DeploymentDetail eliminadas. Ya no son vistas principales.
 
 const NotFoundStub = () => (
   <div className="flex flex-col items-center justify-center h-full">
@@ -32,55 +30,36 @@ export const router = createBrowserRouter([
   },
   
   // ==========================================
-  // REINO 1: EL DASHBOARD DE PENÉLOPE (Ingenieros y Owners)
+  // REINO 1: EL DASHBOARD DE PENÉLOPE (Ingenieros invitados y OWNER)
   // ==========================================
   {
     path: '/',
-    // Si Azul (member) intenta entrar aquí, la expulsamos a /v-hub
     element: <ProtectedRoute allowedRoles={['owner', 'engineer']} fallbackPath="/v-hub" />,
     children: [
       { path: '', element: <Dashboard /> },
-      { path: 'projects/:projectId', element: <ProjectDetail /> },
-      { path: 'projects/:projectId/experiments/:experimentId', element: <ExperimentDetail /> },
-      { path: 'projects/:projectId/deployments/:deploymentId', element: <DeploymentDetail /> }
+      // La única ruta necesaria ahora es el Centro de proyectos (ProjectDetail). 
+      // Los experimentos y despliegues se manejan internamente con el estado del componente.
+      { path: 'projects/:projectId', element: <ProjectDetail /> }
     ]
   },
 
   // ==========================================
-  // REINO 2: EL VALIDATION HUB DE AZUL (Stakeholders)
+  // REINO 2: EL VALIDATION HUB DE AZUL (userPersona Stakeholders, role="MEMBER" )
   // ==========================================
   {
     path: '/v-hub',
-    // Si un ingeniero sin permisos entra, lo devolvemos a su dashboard
     element: <ProtectedRoute allowedRoles={['member']} fallbackPath="/" />,
     children: [
       {
-        path: '', // Coincide con /v-hub
+        path: '',
         element: <VHubLayout />,
         children: [
           { path: '', element: <VHubDashboard /> },
-          // En el futuro agregaremos aquí la "Arena de Pruebas":
-          // { path: 'project/:projectId', element: <VHubPlayground /> }
+          { path: 'project/:projectId', element: <VHubPlayground /> }
         ]
       }
     ]
   },
-
-  {
-  path: '/v-hub',
-  element: <ProtectedRoute allowedRoles={['member']} fallbackPath="/" />,
-  children: [
-    {
-      path: '',
-      element: <VHubLayout />,
-      children: [
-        { path: '', element: <VHubDashboard /> },
-        // AGREGAMOS ESTA RUTA
-        { path: 'project/:projectId', element: <VHubPlayground /> }
-      ]
-    }
-  ]
-},
 
   {
     path: '*',
