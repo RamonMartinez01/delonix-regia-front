@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useExperiment } from '../api/getExperimentsById';
 import { CreateDeploymentModal } from '../../deployments/components/CreateDeploymentModal';
+import { ForkExperimentModal } from '../components/ForkExperimentModal';
 
 interface ExperimentDetailProps {
   projectId: string;
@@ -13,6 +14,7 @@ export const ExperimentDetail = ({ projectId, experimentId }: ExperimentDetailPr
   // Eliminamos el useParams(). Ahora recibimos los IDs directamente de quien nos invoque.
   const navigate = useNavigate();
   const [isDeployModalOpen, setIsDeployModalOpen] = useState(false);
+  const [isForkModalOpen, setIsForkModalOpen] = useState(false);
 
   // ESCUDO TYPESCRIPT (Type Guard)
   if (!projectId || !experimentId) {
@@ -80,7 +82,10 @@ export const ExperimentDetail = ({ projectId, experimentId }: ExperimentDetailPr
         <div className="flex gap-3">
           {experiment.status === 'completed' && (
             <>
-              <button className="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-sm font-medium transition-all">
+              <button 
+                onClick={() => setIsForkModalOpen(true)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 rounded-lg text-sm font-medium transition-all"
+              >
                 <i className="fa-solid fa-code-fork mr-2"></i> Bifurcar
               </button>
               
@@ -252,6 +257,15 @@ export const ExperimentDetail = ({ projectId, experimentId }: ExperimentDetailPr
           }}
         />
       )}
+
+      {/* MODAL DE BIFURCACIÓN */}
+      <ForkExperimentModal
+        isOpen={isForkModalOpen}
+        onClose={() => setIsForkModalOpen(false)}
+        projectId={projectId}
+        experimentId={experiment.id}
+        experimentName={experiment.name || 'Sin nombre'}
+      />
     </div>
   );
 };
