@@ -1,12 +1,15 @@
 // src/features/projects/routes/Dashboard.tsx
 import { useState } from 'react';
-import { ProjectsList } from '../components/ProjectsList';
-import { CreateProjectModal } from '../components/CreateProjectModal';
+import { ProjectsList } from '../../projects/components/ProjectsList';
+import { CreateProjectModal } from '../../projects/components/CreateProjectModal';
 
 import { Modal } from '../../../components/ui/Modal'; // La "cáscara" genérica
 import { CreateInvitationForm } from '../../invitations/components/CreateInvitationForm';
+import { useActiveWorkspace } from '../api/useActiveWorkspace';
 
 export const Dashboard = () => {
+  const { data: workspace, isLoading } = useActiveWorkspace();
+
   // Estado que controla el modal
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
@@ -17,7 +20,12 @@ export const Dashboard = () => {
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 border-b border-slate-800 pb-6">
           <div>
             <h1 className="text-3xl font-bold text-emerald-400">
-              Centro de Comando
+              {/* Renderizado condicional del nombre real */}
+              {isLoading ? (
+                <span className="animate-pulse opacity-50">Cargando Workspace...</span>
+              ) : (
+                workspace?.name || "Centro de Comando"
+              )}
             </h1>
             <p className="text-slate-400 mt-1">
               Supervisión de infraestructura y modelos de Machine Learning.

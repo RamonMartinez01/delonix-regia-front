@@ -2,7 +2,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LoginForm } from '../features/auth/components/LoginForm';
 import { ProtectedRoute } from './ProtectedRoute';
-import { Dashboard } from '../features/projects/routes/Dashboard';
+import { Dashboard } from '../features/workspaces/routes/Dashboard';
 import { ProjectDetail } from '../features/projects/routes/ProjectDetail';
 import { AuthBootstrapper } from '../features/auth/components/AuthBootstrapper';
 import { AcceptInvitation } from '../features/invitations/routes/AcceptInvitation';
