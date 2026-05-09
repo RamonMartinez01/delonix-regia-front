@@ -82,14 +82,6 @@ export const Dashboard = () => {
            *
            */}
           <div className="flex gap-4 mt-4 md:mt-0">
-            {/* Nuevo botón para Invitaciones */}
-            <button
-              onClick={() => setIsInviteModalOpen(true)}
-              className="bg-slate-700 hover:bg-slate-600 text-white px-5 py-2.5 rounded-lg font-medium transition-colors border border-slate-600"
-            >
-              Invitar Colaborador
-            </button>
-
             <button
               onClick={() => setIsModalOpen(true)}
               className="mt-4 md:mt-0 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-emerald-900/20">
