@@ -90,7 +90,7 @@ export const InferenceArena = ({ deployment, projectDescription }: Props) => {
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
           <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Dato de Entrada</label>
           <textarea 
-            className="w-full bg-slate-950 border border-slate-800 rounded-xl p-4 text-slate-200 focus:border-emerald-500 outline-none transition-all resize-none min-h-[120px]"
+            className="w-full bg-[#0a0f1e] border border-slate-800 rounded-xl p-4 text-slate-200 focus:border-emerald-500 outline-none transition-all resize-none min-h-[120px]"
             placeholder="Escribe algo aquí para que la IA lo analice..."
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}

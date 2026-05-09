@@ -29,12 +29,12 @@ export const DeploymentDetail = ({ deploymentId }: DeploymentDetailProps) => {
 
   // 3. CONTENEDOR FLOTANTE Y DISEÑO COMPRIMIDO
   return (
-    <div className="bg-slate-950 rounded-2xl border border-slate-800 shadow-xl text-slate-200 p-6 lg:p-8 font-sans animate-in fade-in duration-300">
+    <div className="bg-[#0a0f1e] rounded-2xl border border-slate-800 shadow-xl text-slate-200 p-6 lg:p-8 font-sans animate-in fade-in duration-300">
       
       {/* Cabecera de Ingeniería */}
       <header className="mb-8 border-b border-slate-800/60 pb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100">{deployment.name}</h1>
+          <h1 className="text-2xl font-bold text-slate-200">{deployment.name}</h1>
           <p className="text-slate-400 mt-1 font-mono text-[10px] uppercase tracking-widest flex items-center gap-2">
             <i className="fa-solid fa-fingerprint text-slate-600"></i> Hash: {deployment.id}
           </p>
