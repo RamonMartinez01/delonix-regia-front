@@ -9,7 +9,9 @@ import { AcceptInvitation } from '../features/invitations/routes/AcceptInvitatio
 import { VHubLayout } from '../features/validation/routes/VHubLayout';
 import { VHubDashboard } from '../features/validation/routes/VHubDashboard';
 import { VHubPlayground } from '../features/validation/routes/VHubPlayground';
-// Importaciones de ExperimentDetail y DeploymentDetail eliminadas. Ya no son vistas principales.
+
+import { AppLayout } from '../components/layouts/AppLayout';
+import { TeamPage } from '../features/team/routes/TeamPage';
 
 const NotFoundStub = () => (
   <div className="flex flex-col items-center justify-center h-full">
@@ -36,10 +38,15 @@ export const router = createBrowserRouter([
     path: '/',
     element: <ProtectedRoute allowedRoles={['owner', 'engineer']} fallbackPath="/v-hub" />,
     children: [
-      { path: '', element: <Dashboard /> },
-      // La única ruta necesaria ahora es el Centro de proyectos (ProjectDetail). 
-      // Los experimentos y despliegues se manejan internamente con el estado del componente.
-      { path: 'projects/:projectId', element: <ProjectDetail /> }
+      {
+        // Envolvemos las rutas de ingenieros en el AppLayout
+        element: <AppLayout />, 
+        children: [
+          { path: '', element: <Dashboard /> },
+          { path: 'projects/:projectId', element: <ProjectDetail /> },
+          { path: '/team', element: <TeamPage /> } // Nueva ruta de gestión
+        ]
+      }
     ]
   },
 
