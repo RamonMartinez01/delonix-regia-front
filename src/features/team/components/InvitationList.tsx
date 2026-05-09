@@ -10,8 +10,8 @@ export const InvitationList = ({ invitations }: InvitationListProps) => {
   const hasInvitations = invitations.length > 0;
 
   return (
-    <section className="bg-slate-900/30 border border-slate-800/60 rounded-2xl overflow-hidden border-dashed">
-      <div className="px-6 py-4 border-b border-slate-800/60">
+    <section className="bg-[#121b2d] border border-slate-800/60 rounded-2xl overflow-hidden border-dashed">
+      <div className="px-6 py-4 border-b border-slate-800/60 bg-slate-800">
         <h2 className="font-semibold text-slate-400 flex items-center gap-2 italic">
           <Clock size={18} />
           Invitaciones Pendientes

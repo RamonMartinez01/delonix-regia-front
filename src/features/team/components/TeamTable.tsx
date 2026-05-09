@@ -10,7 +10,7 @@ interface TeamTableProps {
 
 export const TeamTable = ({ members }: TeamTableProps) => {
   return (
-    <section className="bg-slate-900/50 border border-slate-800 rounded-2xl overflow-hidden backdrop-blur-sm">
+    <section className="bg-slate-800 border border-slate-800 rounded-2xl overflow-hidden shadow-xl shadow-black/20">
       <div className="px-6 py-4 border-b border-slate-800 bg-slate-800/30">
         <h2 className="font-semibold text-slate-200 flex items-center gap-2">
           <ShieldCheck size={18} className="text-emerald-500" />
@@ -18,7 +18,7 @@ export const TeamTable = ({ members }: TeamTableProps) => {
         </h2>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-[#121b2d]"> {/**bg-[#0a0f1e] */}
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="text-slate-500 text-xs uppercase tracking-wider">

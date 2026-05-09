@@ -24,6 +24,7 @@ export const TeamPage = () => {
   }
 
   return (
+    <div className="min-h-screen bg-slate-900 text-slate-100 p-8">
     <div className="space-y-8 animate-in fade-in duration-500">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
@@ -44,6 +45,7 @@ export const TeamPage = () => {
       <TeamTable members={data?.members ?? []} />
       
       <InvitationList invitations={data?.pending_invitations ?? []} />
+    </div>
     </div>
   );
 };
