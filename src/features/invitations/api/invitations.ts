@@ -1,6 +1,4 @@
 // src/features/invitations/api/invitations.ts
-
-// Ajusta esta ruta relativa según dónde esté tu config/axios.ts
 import apiClient from '../../../config/axios'; 
 import type { ValidateInviteResponse, AcceptInvitePayload, AcceptInviteResponse, CreateInvitationPayload, CreateInvitationResponse } from '../types';
 
