@@ -1,178 +1,179 @@
 // src/features/invitations/components/CreateInvitationForm.tsx
 import { useState } from 'react';
 import { useProjects } from '../../projects/api/getProjects';
-import { createInvitation } from '../api/invitations';
+import { useTeamMatrix } from '../../team/hooks/useTeamMatrix';
+import { useCreateInvitation } from '../hooks/useCreateInvitation';
+import { Clipboard, Check, AlertCircle } from 'lucide-react';
 
 interface CreateInvitationFormProps {
   onSuccess?: () => void;
+  fixedProjectId?: string;
 }
 
-export const CreateInvitationForm = ({ onSuccess }: CreateInvitationFormProps) => {
+export const CreateInvitationForm = ({ onSuccess, fixedProjectId }: CreateInvitationFormProps) => {
+  // 1. Sensores de Datos y Mutación
   const { data: projects, isLoading: isLoadingProjects } = useProjects();
+  const { data: team } = useTeamMatrix();
+  const { mutate: sendInvite, isPending, error: mutationError } = useCreateInvitation();
 
+  // 2. Estado del Formulario
   const [email, setEmail] = useState('');
-  const [projectId, setProjectId] = useState<string>('');
-  
-  // Estado inicial vacío para forzar la intencionalidad del usuario
+  const [projectId, setProjectId] = useState<string>(fixedProjectId || '');
   const [role, setRole] = useState<string>(''); 
-  
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
   const [successLink, setSuccessLink] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!role) return; // Doble validación de seguridad
+    setLocalError(null);
 
-    setIsSubmitting(true);
-    setError(null);
-    setSuccessLink(null);
+    // --- ESCUDO DE DUPLICADOS (Validación Local) ---
+    const isAlreadyMember = team?.members.some(m => m.email.toLowerCase() === email.toLowerCase());
+    const isAlreadyInvited = team?.pending_invitations.some(i => i.email.toLowerCase() === email.toLowerCase());
 
-    try {
-      const response = await createInvitation({
-        email,
-        project_id: projectId || null,
-        role,
-      });
-
-      setSuccessLink(response.fallback_link);
-      
-      setEmail('');
-      setProjectId('');
-      setRole(''); 
-      
-    } catch (err: any) {
-      setError(err.response?.data?.detail || 'Ocurrió un error al forjar la invitación.');
-    } finally {
-      setIsSubmitting(false);
+    if (isAlreadyMember) {
+      setLocalError("Esta persona ya es parte de la tripulación.");
+      return;
     }
+    if (isAlreadyInvited) {
+      setLocalError("Ya existe una invitación pendiente para este correo.");
+      return;
+    }
+
+    // --- EJECUCIÓN DE LA FORJA ---
+    sendInvite({
+      email,
+      project_id: projectId || null,
+      role,
+    }, {
+      onSuccess: (data) => {
+        setSuccessLink(data.fallback_link);
+        setEmail('');
+        // No reseteamos fixedProjectId si viene por props
+      }
+    });
   };
 
   if (successLink) {
     return (
-      <div className="p-4 bg-emerald-900/20 border border-emerald-500/30 rounded-lg text-center">
-        <h3 className="text-emerald-400 font-bold mb-2">¡Invitación Forjada!</h3>
-        <p className="text-slate-300 text-sm mb-4">
-          El correo está en camino. Si Prefieres enviar esta invitación por un canal directo (WhatsApp/LinkedIn), usa este enlace:
-        </p>
-        <div className="flex items-center gap-2 bg-slate-900 p-2 rounded border border-slate-700">
+      <div className="space-y-4 animate-in fade-in zoom-in duration-300">
+        <div className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-center">
+          <div className="w-12 h-12 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Check className="text-emerald-500" size={24} />
+          </div>
+          <h3 className="text-emerald-400 font-bold text-lg">¡Invitación Forjada!</h3>
+          <p className="text-slate-400 text-sm mt-2">
+            El Magic Link ha sido generado. Puedes copiarlo para enviarlo por canales directos.
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-2 bg-slate-950 p-3 rounded-lg border border-slate-800">
           <input 
             type="text" 
             readOnly 
             value={successLink} 
-            className="bg-transparent w-full text-xs text-slate-400 outline-none select-all"
+            className="bg-transparent w-full text-xs text-slate-500 outline-none select-all font-mono"
           />
           <button 
+            type="button"
             onClick={() => navigator.clipboard.writeText(successLink)}
-            className="bg-slate-700 hover:bg-slate-600 px-3 py-1 rounded text-xs text-white transition-colors"
+            className="bg-slate-800 hover:bg-slate-700 p-2 rounded text-emerald-500 transition-colors"
           >
-            Copiar
+            <Clipboard size={16} />
           </button>
         </div>
+        
         <button 
           onClick={onSuccess}
-          className="mt-6 text-sm text-emerald-500 hover:text-emerald-400 underline"
+          className="w-full py-3 text-sm text-slate-400 hover:text-white transition-colors"
         >
-          Cerrar
+          Cerrar ventana
         </button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-      {error && (
-        <div className="p-3 bg-red-900/30 border border-red-500/50 rounded text-red-400 text-sm">
-          {error}
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {(localError || mutationError) && (
+        <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3 text-red-400 text-sm animate-in shake duration-300">
+          <AlertCircle size={18} />
+          <p>{localError || (mutationError as any).response?.data?.detail || 'Error en la misión.'}</p>
         </div>
       )}
 
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">
-          Correo de tu invitado
+        <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+          Correo del Colaborador
         </label>
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="collega@empresa.com"
-          className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+          placeholder="nombre@ejemplo.com"
+          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 transition-all"
         />
       </div>
 
-      {/* --- SEGMENTED CONTROL PARA RBAC --- */}
-      <div>
-        <label className="block text-sm font-medium text-slate-300 mb-2">
-          Selecciona el nivel de acceso (rol)
+      {/* Selector de Rol (Segmented Control que ya tenías) */}
+      <div className="space-y-3">
+        <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest">
+          Nivel de Acceso (RBAC)
         </label>
-        
-        {/* Los Botones Toggle */}
-        <div className="flex gap-3 mb-3">
-          <button
-            type="button"
-            onClick={() => setRole('member')}
-            className={`flex-1 py-2.5 rounded-lg border text-sm font-medium transition-all ${
-              role === 'member'
-                ? 'bg-emerald-900/40 border-emerald-500 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
-                : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'
-            }`}
-          >
-            MEMBER
-          </button>
-          <button
-            type="button"
-            onClick={() => setRole('engineer')}
-            className={`flex-1 py-2.5 rounded-lg border text-sm font-medium transition-all ${
-              role === 'engineer'
-                ? 'bg-emerald-900/40 border-emerald-500 text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.2)]'
-                : 'bg-slate-800 border-slate-700 text-slate-400 hover:bg-slate-700'
-            }`}
-          >
-            ENGINEER
-          </button>
+        <div className="flex gap-2">
+          {['member', 'engineer'].map((r) => (
+            <button
+              key={r}
+              type="button"
+              onClick={() => setRole(r)}
+              className={`flex-1 py-3 rounded-xl border text-xs font-bold uppercase tracking-wider transition-all ${
+                role === r
+                  ? 'bg-emerald-500/10 border-emerald-500/50 text-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
+                  : 'bg-slate-950 border-slate-800 text-slate-500 hover:border-slate-700'
+              }`}
+            >
+              {r}
+            </button>
+          ))}
         </div>
-
-        {/* Las Cajas de Texto de Contexto (Solo se renderiza la activa) */}
-        {role === 'member' && (
-          <div className="bg-slate-900/80 border border-slate-700/50 p-3 rounded-lg text-sm text-slate-400 animate-in fade-in zoom-in duration-200">
-            <strong className="text-slate-300">Stakeholder / Cliente:</strong> Tiene permisos estrictamente de lectura e interacción. Solo puede ver la interfaz de pruebas (UAT), ejecutar inferencias y enviar feedback. Sin acceso al código ni a la facturación.
-          </div>
-        )}
-        {role === 'engineer' && (
-          <div className="bg-slate-900/80 border border-slate-700/50 p-3 rounded-lg text-sm text-slate-400 animate-in fade-in zoom-in duration-200">
-            <strong className="text-slate-300">Ingeniero / Científico de Datos:</strong> Tiene permisos de lectura y escritura dentro del proyecto asignado. Puede realizar experimentos y desplegar modelos. Sin acceso a facturación ni gestión de usuarios.
-          </div>
+        {role && (
+          <p className="text-[11px] text-slate-500 italic bg-slate-950/50 p-3 rounded-lg border border-slate-800/50">
+            {role === 'member' 
+              ? 'MEMBER: Solo lectura y feedback en el área de UAT.' 
+              : 'ENGINEER: Permisos de despliegue y experimentación en proyectos.'}
+          </p>
         )}
       </div>
-      {/* --- FIN SEGMENTED CONTROL --- */}
 
       <div>
-        <label className="block text-sm font-medium text-slate-300 mb-1">
-          Asignar a un Proyecto (obligatorio por ahora)
+        <label className="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-2">
+          Asignación de Proyecto
         </label>
         <select
           value={projectId}
           onChange={(e) => setProjectId(e.target.value)}
-          disabled={isLoadingProjects}
-          className="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 disabled:opacity-50"
+          disabled={!!fixedProjectId || isLoadingProjects}
+          className="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-3 text-slate-200 focus:outline-none focus:border-emerald-500/50 disabled:opacity-50 disabled:cursor-not-allowed appearance-none"
         >
-          <option value="">-- Es necesario asignar un proyecto --</option>
-          {projects?.map((project) => (
-            <option key={project.id} value={project.id}>
-              {project.name}
-            </option>
+          <option value="">-- Sin proyecto (Acceso global) --</option>
+          {projects?.map((p) => (
+            <option key={p.id} value={p.id}>{p.name}</option>
           ))}
         </select>
+        {fixedProjectId && (
+          <p className="text-[10px] text-emerald-500/70 mt-2 ml-1">
+            * Bloqueado al contexto del proyecto actual.
+          </p>
+        )}
       </div>
 
       <button
         type="submit"
-        // El botón se bloquea si está enviando o si falta elegir el rol o el proyecto
-        disabled={isSubmitting || !role || !projectId} 
-        className="mt-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-600 disabled:text-slate-400 disabled:cursor-not-allowed text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-emerald-900/20"
+        disabled={isPending || !role}
+        className="w-full bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-800 disabled:text-slate-600 text-white font-bold py-4 rounded-xl transition-all shadow-lg shadow-emerald-900/20 active:scale-[0.98]"
       >
-        {isSubmitting ? 'Forjando...' : 'Enviar Invitación'}
+        {isPending ? 'FORJANDO ENLACE...' : 'EMITIR INVITACIÓN'}
       </button>
     </form>
   );

@@ -60,13 +60,13 @@ export const ExperimentDetail = ({ projectId, experimentId }: ExperimentDetailPr
   const hasDeployments = experiment.deployments.length > 0;
 
   return (
-    <div className="bg-slate-950 rounded-2xl border border-slate-800 shadow-xl text-slate-200 p-6 lg:p-8 font-sans animate-in fade-in duration-300">
+    <div className="bg-[#0a0f1e] rounded-2xl border border-slate-800 shadow-xl text-slate-200 p-6 lg:p-8 font-sans animate-in fade-in duration-300">
       
       {/* ZONA 1: CABECERA (ESTATUS Y ACCIÓN) */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-3xl font-bold tracking-tight text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-slate-200">
               {experiment.name || 'Sin nombre'}
             </h1>
             <span className="px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs font-mono text-emerald-400">

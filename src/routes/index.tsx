@@ -12,6 +12,7 @@ import { VHubPlayground } from '../features/validation/routes/VHubPlayground';
 
 import { AppLayout } from '../components/layouts/AppLayout';
 import { TeamPage } from '../features/team/routes/TeamPage';
+import { ModelsPage } from '../features/models/routes/ModelsPage';
 
 const NotFoundStub = () => (
   <div className="flex flex-col items-center justify-center h-full">
@@ -44,7 +45,8 @@ export const router = createBrowserRouter([
         children: [
           { path: '', element: <Dashboard /> },
           { path: 'projects/:projectId', element: <ProjectDetail /> },
-          { path: '/team', element: <TeamPage /> } // Nueva ruta de gestión
+          { path: '/team', element: <TeamPage /> },
+          { path: '/models', element: <ModelsPage /> }  
         ]
       }
     ]
