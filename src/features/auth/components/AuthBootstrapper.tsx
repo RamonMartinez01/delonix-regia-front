@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useGetMe } from '../api/getMe';
 import { useAuthStore } from '../../../stores/authStore';
 import { getToken } from '../utils/token';
+import { getActiveWorkspace } from '../../workspaces/utils/workspace';
 
 interface AuthBootstrapperProps {
   children: React.ReactNode;
@@ -11,42 +12,48 @@ interface AuthBootstrapperProps {
 export const AuthBootstrapper = ({ children }: AuthBootstrapperProps) => {
   // 1. Revisamos el pasaporte local
   const token = getToken();
-  
+
   // 2. Ejecutamos la consulta. ¡Solo viajará si token existe!
   const { data: user, isSuccess, isError } = useGetMe(!!token);
   
   // 3. Nos conectamos al panel de control de nuestra tienda Zustand
-  const { setUser, setIsHydrating, logout } = useAuthStore();
+  const { setUser, setIsHydrating, logout, setActiveWorkspaceId } = useAuthStore();
 
   // 4. El Efecto Secundario: Reaccionar a la respuesta de la red
-  useEffect(() => {
-    // Escenario A: Usuario nuevo o sin sesión
+useEffect(() => {
     if (!token) {
       setIsHydrating(false);
       return;
     }
 
-    // Escenario B: FastAPI nos devolvió el perfil (El contrato User)
     if (isSuccess && user) {
       setUser(user);
-
-      // 👇 EL ESLABÓN PERDIDO: Si no hay un Workspace seleccionado (ej. acaba de hacer login),
-      // le auto-asignamos el primero de su lista para que la app pueda arrancar.
-      const currentWorkspace = useAuthStore.getState().activeWorkspaceId;
-      if (!currentWorkspace && user.workspaces.length > 0) {
-        useAuthStore.getState().setActiveWorkspaceId(user.workspaces[0].workspace_id);
-      }
       
+      // 1. Revisamos si ya hay algo en el LocalStorage (puesto por Login o ActivateOwner)
+      const savedWorkspaceId = getActiveWorkspace();
+      
+      // 2. Verificamos que ese ID guardado realmente pertenezca al usuario actual 
+      // (evita inconsistencias si cambias de cuenta)
+      const hasAccessToSaved = user.workspaces.some(ws => ws.workspace_id === savedWorkspaceId);
+
+      if (savedWorkspaceId && hasAccessToSaved) {
+        // Respetamos la voluntad del usuario/proceso previo
+        setActiveWorkspaceId(savedWorkspaceId);
+      } else if (user.workspaces.length > 0) {
+        // Solo si no hay nada guardado o es inválido, tomamos el primero (OWNER suele ser el primero)
+        // O mejor aún: buscar activamente el OWNER aquí también como respaldo
+        const ownerWS = user.workspaces.find(ws => ws.role.toLowerCase() === 'owner');
+        setActiveWorkspaceId(ownerWS ? ownerWS.workspace_id : user.workspaces[0].workspace_id);
+      }
+
       setIsHydrating(false);
     }
 
-    // Escenario C: El token caducó o fue revocado en la BD
     if (isError) {
-      logout(); // Esto ejecuta nuestro método de limpieza profunda en Zustand
+      logout();
       setIsHydrating(false);
     }
-  }, [token, user, isSuccess, isError, setUser, setIsHydrating, logout]);
+  }, [token, user, isSuccess, isError, setActiveWorkspaceId]);
 
-  // Renderizamos los componentes hijos sin alterar la UI
   return <>{children}</>;
 };

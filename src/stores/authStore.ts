@@ -43,6 +43,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     
     // 3. Purgamos la memoria de Zustand
     set({ user: null, activeWorkspaceId: null, isHydrating: false });
+
+    // Forzamos el regreso a la Landing Page
+    window.location.href = '/';
   },
 
   // --- El Selector Maestro (RBAC Contextual) ---
