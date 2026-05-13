@@ -25,8 +25,8 @@ export const ProtectedRoute = ({ allowedRoles, fallbackPath = '/login' }: Protec
   const currentRole = getActiveRole(); 
 
   // 3. Veredicto 1: No está logueado
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (!user && !isHydrating) {
+    return <Navigate to="/" replace />;
   }
 
   // 4. Veredicto 2: Control de Acceso por Rol (RBAC)

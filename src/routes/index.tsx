@@ -2,6 +2,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LoginForm } from '../features/auth/components/LoginForm';
 import { ProtectedRoute } from './ProtectedRoute';
+import { PublicGuard } from './PublicGuard';
 import { Dashboard } from '../features/workspaces/routes/Dashboard';
 import { ProjectDetail } from '../features/projects/routes/ProjectDetail';
 import { AuthBootstrapper } from '../features/auth/components/AuthBootstrapper';
@@ -14,6 +15,10 @@ import { AppLayout } from '../components/layouts/AppLayout';
 import { TeamPage } from '../features/team/routes/TeamPage';
 import { ModelsPage } from '../features/models/routes/ModelsPage';
 
+import { RegisterForm } from '../features/auth/components/RegisterForm'; 
+import { LandingPage } from '../features/marketing/routes/LandingPage'; 
+
+
 const NotFoundStub = () => (
   <div className="flex flex-col items-center justify-center h-full">
     <h1 className="text-4xl font-black text-red-500">404</h1>
@@ -23,44 +28,51 @@ const NotFoundStub = () => (
 
 // --- Configuración del Enrutador ---
 export const router = createBrowserRouter([
+  // ------------------------------------------------------------
+  // SECTOR ALFA: Acceso Público (Landing, Login, Register)
+  // Protegido por PublicGuard para que los logueados no vuelvan aquí
+  // ------------------------------------------------------------
   {
-    path: '/login',
-    element: <div className="flex flex-col items-center justify-center h-screen w-full"><LoginForm /></div>,
+    element: <PublicGuard />,
+    children: [
+      { path: '/', element: <LandingPage /> },
+      { path: '/login', element: <div className="flex items-center justify-center h-screen bg-[#020617]"><LoginForm /></div> },
+      { path: '/register', element: <div className="flex items-center justify-center h-screen bg-[#020617]"><RegisterForm /></div> },
+    ]
   },
+
+  // ------------------------------------------------------------
+  // SECTOR BETA: Invitaciones (Acceso Híbrido)
+  // ------------------------------------------------------------
+  { path: '/invite', element: <AcceptInvitation /> },
+
+  // ------------------------------------------------------------
+  // SECTOR GAMMA: Ingeniería (OWNER / ENGINEER)
+  // ------------------------------------------------------------
   {
-    path: '/invite',
-    element: <AcceptInvitation />,
-  },
-  
-  // ==========================================
-  // REINO 1: EL DASHBOARD DE PENÉLOPE (Ingenieros invitados y OWNER)
-  // ==========================================
-  {
-    path: '/',
+    path: '/dashboard',
     element: <ProtectedRoute allowedRoles={['owner', 'engineer']} fallbackPath="/v-hub" />,
     children: [
       {
-        // Envolvemos las rutas de ingenieros en el AppLayout
         element: <AppLayout />, 
         children: [
           { path: '', element: <Dashboard /> },
           { path: 'projects/:projectId', element: <ProjectDetail /> },
-          { path: '/team', element: <TeamPage /> },
-          { path: '/models', element: <ModelsPage /> }  
+          { path: 'team', element: <TeamPage /> },
+          { path: 'models', element: <ModelsPage /> }
         ]
       }
     ]
   },
 
-  // ==========================================
-  // REINO 2: EL VALIDATION HUB DE AZUL (userPersona Stakeholders, role="MEMBER" )
-  // ==========================================
+  // ------------------------------------------------------------
+  // SECTOR DELTA: Validación (MEMBER)
+  // ------------------------------------------------------------
   {
     path: '/v-hub',
-    element: <ProtectedRoute allowedRoles={['member']} fallbackPath="/" />,
+    element: <ProtectedRoute allowedRoles={['member']} fallbackPath="/dashboard" />,
     children: [
       {
-        path: '',
         element: <VHubLayout />,
         children: [
           { path: '', element: <VHubDashboard /> },
@@ -70,10 +82,7 @@ export const router = createBrowserRouter([
     ]
   },
 
-  {
-    path: '*',
-    element: <NotFoundStub />,
-  }
+  { path: '*', element: <NotFoundStub /> }
 ]);
 
 export function AppRouter() {
