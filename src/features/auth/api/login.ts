@@ -36,7 +36,7 @@ export const useLogin = () => {
       // 2. Reignición del sistema: 
       // Forzamos una recarga completa hacia la raíz. Esto garantiza que la caché de 
       // TanStack Query empiece limpia y que el AuthBootstrapper monte el estado de hidratación.
-      window.location.href = '/';
+      window.location.href = '/dashboard';
     },
     onError: (error) => {
       // Opcional pero recomendado: Dejar un registro si las credenciales fallan

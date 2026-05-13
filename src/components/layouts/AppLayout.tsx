@@ -9,7 +9,7 @@ export const AppLayout = () => {
   const location = useLocation();
   const { data: activeWorkspace, isLoading } = useActiveWorkspace();
 
-  const isDashboard = location.pathname === '/';
+  const isDashboard = location.pathname === '/dashboard';
 
   return (
     <div className="flex h-screen bg-[#020617] text-slate-200 overflow-hidden">
@@ -31,7 +31,7 @@ export const AppLayout = () => {
             ) : (
               // Vista para el RESTO DE RUTAS (Team, Project Detail, etc)
               <Link
-                to="/"
+                to="/dashboard"
                 className="group flex items-center gap-2 hover:opacity-80 transition-all animate-in fade-in duration-300"
               >
                 <div className={`w-2 h-2 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.6)] 
