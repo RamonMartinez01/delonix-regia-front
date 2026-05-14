@@ -1,51 +1,45 @@
 // src/config/axios.ts
 import axios from 'axios';
-import { getToken } from '../features/auth/utils/token'
-//import { removeActiveWorkspace } from '../features/workspaces/utils/workspace';
 import { useAuthStore } from '../stores/authStore';
 
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api', //'https://api-delonix.lux-geneve.com/api', 
+  baseURL: 'http://localhost:8000/api', //'https://api-delonix.lux-geneve.com/api', 
   headers: {
     'Content-Type': 'application/json',
   },
-  // Nota de seguridad: conCredentials en true es necesario si usamos cookies, 
-  // pero como usaremos JWT en el header 'Authorization', lo omitimos por ahora.
+  // Ahora que el backend envía Set-Cookie, necesitamos esto para que 
+  // el navegador incluya la cookie en cada petición de forma automática.
+  withCredentials: true,
 });
 
 // Aduana de Salida (Interceptores de Petición)
 apiClient.interceptors.request.use(
   (config) => {
-    // Recuperar el token del almacenamiento seguro.
-     const token = getToken();
-     if (token && config.headers) {
-       config.headers.Authorization = `Bearer ${token}`;
-     }
 
-     // ZUSTAND: Con esto leemos el store fuera de React
-     const workspaceId = useAuthStore.getState().activeWorkspaceId;
-     if (workspaceId && config.headers) {
-       config.headers['X-Workspace-ID'] = workspaceId;
-     }
+
+    // ZUSTAND: Con esto leemos el store fuera de React
+    const workspaceId = useAuthStore.getState().activeWorkspaceId;
+    if (workspaceId && config.headers) {
+      config.headers['X-Workspace-ID'] = workspaceId;
+    }
 
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
+  
 );
 
 // Aduana de Entrada (Interceptores de Respuesta)
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Si FastAPI nos grita "¡No Autorizado!" (Token expirado o inválido)
+    // Si FastAPI nos dice "No Autorizado"
     if (error.response?.status === 401) {
-      // 1. Ejecutamos la rutina de limpieza total desde nuestro store
-      useAuthStore.getState().logout();
-
-      // 2. Expulsión dura
-      window.location.href = '/login';
+      // IMPORTANTE: Solo disparamos logout si NO estamos en la landing page
+      // para evitar bucles infinitos de redirección.
+      if (window.location.pathname !== '/') {
+        useAuthStore.getState().logout();
+      }
     }
     return Promise.reject(error);
   }
