@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useAuthStore } from '../stores/authStore';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8000/api', //'https://api-delonix.lux-geneve.com/api', 
+  baseURL: 'https://api-delonix.lux-geneve.com/api', 
   headers: {
     'Content-Type': 'application/json',
   },
