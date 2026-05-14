@@ -12,27 +12,28 @@ export const getMe = async (): Promise<User> => {
   return response.data;
 };
 
+
 /**
- * 2. Hook Custom de React Query
+ * 2. Custom Hook de React Query
  * Encapsula la lógica de caché y estado de la petición.
  */
 export const useGetMe = (enabled: boolean = true) => {
   return useQuery({
-    // La 'Llave de Caché'. React Query la usa para identificar esta petición en toda la app.
     queryKey: ['auth', 'me'],
-    
-    // La función que ejecuta el trabajo sucio.
     queryFn: getMe,
-    
-    // Condición de disparo: Solo viaja al backend si esto es true.
     enabled,
     
-    // Configuración estratégica: 
-    // Si FastAPI dice 401 (token inválido), no queremos reintentar 3 veces (comportamiento por defecto).
-    retry: 0,
     
-    // Para la autenticación, es molesto que vuelva a pedir los datos 
-    // solo porque el usuario cambió de pestaña en el navegador.
-    refetchOnWindowFocus: false,
+    retry: 0, // Si es 401, no reintentamos; la sesión simplemente no existe.
+    
+    refetchOnWindowFocus: false, // Evita parpadeos innecesarios al cambiar de pestaña.
+
+    /**
+     * NOTA TÁCTICA:
+     * 'staleTime' determina cuánto tiempo consideramos que estos datos son "frescos".
+     * Para el perfil de usuario, podemos permitirnos 5 minutos (300000 ms) 
+     * para no saturar al servidor con peticiones /me constantes.
+     */
+    staleTime: 5 * 60 * 1000, 
   });
 };
