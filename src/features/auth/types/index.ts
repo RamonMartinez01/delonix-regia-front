@@ -7,12 +7,13 @@ export interface LoginCredentials {
   password: string;
 }
 
-// El contrato exacto que nos devuelve FastAPI (Token esquema Pydantic) al hacer login
-export interface TokenResponse {
-  access_token: string;
-  token_type: string;
+/** 
+ * Ya no recibimos el token aquí. el 'access_token' viaja oculto en el header Set-Cookie.
+ */
+export interface AuthResponse {
+  detail: string;
+  full_name?: string; 
 }
-
 
 // --- 2. Perfil y Autorización (RBAC Contextual) ---
 
