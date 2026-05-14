@@ -1,3 +1,4 @@
+// src/widgets/Sidebar.tsx
 import { useAuthStore } from '../stores/authStore';
 import { useUIStore } from '../stores/uiStore';
 import { NavLink } from 'react-router-dom';
@@ -18,19 +19,19 @@ export const Sidebar = () => {
   const menuItems = [
     { 
       label: 'Proyectos', 
-      path: '/', 
+      path: '/dashboard', 
       icon: LayoutDashboard, 
       show: true 
     },
     { 
       label: 'Equipo', 
-      path: '/team', 
+      path: '/dashboard/team', 
       icon: Users, 
       show: role === 'owner' // El Gran Candado
     },
     { 
       label: 'Modelos ML', 
-      path: '/models', 
+      path: '/dashboard/models', 
       icon: Database, 
       show: true 
     },

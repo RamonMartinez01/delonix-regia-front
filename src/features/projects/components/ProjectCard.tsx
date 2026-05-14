@@ -10,7 +10,7 @@ export const ProjectCard = ({ project }: ProjectCardProps) => {
 
     return (
         // Envolvemos la tarjeta en un Link hacia la ruta dinámica
-        <Link to={`/projects/${project.id}`} className="block h-full group"> { /* Añadimos group aquí, y cambiamos el hover abajo por group-hover... */}
+        <Link to={`/dashboard/projects/${project.id}`} className="block h-full group"> { /* Añadimos group aquí, y cambiamos el hover abajo por group-hover... */}
             <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 group-hover:border-emerald-500 transition-colors shadow-lg flex flex-col h-full cursor-pointer">
                 <div className="flex-grow">
                     <h3 className="text-xl font-bold text-slate-100 mb-2 truncate group-hover:text-emerald-400 transition-colors" title={project.name}>
