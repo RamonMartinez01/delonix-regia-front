@@ -1,60 +1,56 @@
 // src/features/auth/api/activateOwner.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '../../../config/axios';
-import { setToken } from '../utils/token';
-import type { TokenResponse, LoginCredentials } from '../types';
+import type { AuthResponse, LoginCredentials } from '../types';
 import { getMe } from './getMe';
 import { setActiveWorkspace } from '../../workspaces/utils/workspace';
 
 /**
- * Función que golpea el protocolo de ascenso a OWNER.
- * Reutilizamos LoginCredentials porque Azul enviará Email y Password.
+ * Función para el protocolo de ascenso a OWNER.
+ * El backend se encargará de inyectar la nueva cookie HttpOnly.
  */
-export const activateOwnerAccount = async (credentials: LoginCredentials): Promise<TokenResponse> => {
-  const response = await apiClient.post<TokenResponse>('/auth/activate-owner', credentials);
+export const activateOwnerAccount = async (credentials: LoginCredentials): Promise<AuthResponse> => {
+  const response = await apiClient.post<AuthResponse>('/auth/activate-owner', credentials);
   return response.data;
 };
 
 /**
- * El Martillo de Soberanía:
- * Transforma a un invitado en un OWNER y refresca su sesión.
+ * Refactorizado para el paradigma de Cookies.
  */
 export const useActivateOwner = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: activateOwnerAccount,
-    onSuccess: async (data) => {
-      if (data.access_token) {
-        // 1. Reemplazamos el token viejo (MEMBER) por el nuevo (OWNER)
-        setToken(data.access_token);
+    onSuccess: async () => {
+      
+      try {
+        // 1. PETICIÓN IMPERATIVA: 
+        // Pregunta al backend por el nuevo perfil. Axios enviará la NUEVA cookie (OWNER).
+        const meData = await getMe();
 
-       try {
-          // 2. PETICIÓN IMPERATIVA: 
-          // Antes de saltar al Dashboard, preguntamos al backend por la lista fresca de WS.
-          const meData = await getMe();
+          // 2. IDENTIFICAR EL Workspace: 
+        const personalWS = meData.workspaces.find(
+          (ws) => ws.role.toLowerCase() === 'owner'
+        );
 
-          // 3. IDENTIFICAR EL TRONO: 
-          // Buscamos en el array de 'workspaces' aquel donde el rol sea estrictamente 'owner'
-          const personalWS = meData.workspaces.find(
-            (ws) => ws.role.toLowerCase() === 'owner'
-          );
+        if (personalWS) {
+          // 3. Marcamos el ID del nuevo workspace como el activo en LocalStorage
+          setActiveWorkspace(personalWS.workspace_id);
+        }
 
-          if (personalWS) {
-            // 4. Marcamos el ID del nuevo workspace como el activo
-            setActiveWorkspace(personalWS.workspace_id);
-          }
-
-          // 5. Reignición
-          queryClient.clear();
-          window.location.href = '/dashboard';
+        // 4. LIMPIEZA Y REINICIO:
+        // Borramos toda la caché vieja (que tenía datos de invitado)
+        queryClient.clear();
+        
+        // Saltamos al dashboard ya con la identidad de OWNER cargada
+        window.location.href = '/dashboard';
 
         } catch (error) {
           console.error("Error al intentar localizar el nuevo Trono:", error);
-          // Fallback: Si algo falla, al menos que entre al dashboard general
           window.location.href = '/dashboard';
         }
       }
-    }
+    
   });
 };
