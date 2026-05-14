@@ -28,9 +28,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: loginWithEmailAndPassword,
     onSuccess: () => {
-      // LA MANIOBRA SILENCIOSA:
-      // No llamamos a setToken(). El navegador ya guardó la cookie 
-      // en el momento en que 'apiClient.post' recibió la respuesta.
+     
 
       // Reignición del sistema:
       // Al redirigir a /dashboard, el AuthBootstrapper se activará,
