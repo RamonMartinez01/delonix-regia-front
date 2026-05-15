@@ -1,9 +1,7 @@
 // src/stores/authStore.ts
 import { create } from 'zustand';
 import type { User, UserRole } from '../features/auth/types';
-import { removeActiveWorkspace } from '../features/workspaces/utils/workspace';
-// IMPORTANTE: No importamos apiClient aquí directamente para evitar ciclos, 
-// pero la lógica de limpieza debe ser total.
+import { removeActiveWorkspace, setActiveWorkspace } from '../features/workspaces/utils/workspace';
 
 interface AuthState {
   user: User | null;
@@ -22,15 +20,20 @@ interface AuthState {
   isHydrating: true,
 
   setUser: (user) => set({ user }),
-  setActiveWorkspaceId: (id) => set({ activeWorkspaceId: id }),
+
+  setActiveWorkspaceId: (id) => {
+    // 1. Guardamos en la memoria RAM (Zustand)
+    set({ activeWorkspaceId: id });
+    // 2. Guardamos en el Disco Duro (LocalStorage)
+    if (id) {
+      setActiveWorkspace(id);
+    } else {
+      removeActiveWorkspace();
+    }
+  },
+
   setIsHydrating: (status) => set({ isHydrating: status }),
 
-  /**
-   * PROTOCOLO DE EXTINCIÓN TOTAL
-   * Esta acción limpia el estado local. La llamada al endpoint /logout
-   * del backend se hará desde el hook que dispare el evento,
-   * pero esta función asegura que el estado de React quede en blanco.
-   */
   logout: () => {
     // 1. Limpieza de valores Locales
     // Ya no llamamos a removeToken() porque no hay token que borrar manualmente.

@@ -17,6 +17,7 @@ import { ModelsPage } from '../features/models/routes/ModelsPage';
 
 import { RegisterForm } from '../features/auth/components/RegisterForm'; 
 import { LandingPage } from '../features/marketing/routes/LandingPage'; 
+import { GatewayPage } from '../features/auth/components/GatewayPage';
 
 
 
@@ -24,13 +25,6 @@ const NotFoundStub = () => (
   <div className="flex flex-col items-center justify-center h-full">
     <h1 className="text-4xl font-black text-red-500">404</h1>
     <p className="text-slate-400 mt-2">El sector del espacio que buscas no existe.</p>
-  </div>
-);
-
-const GatewayStub = () => (
-  <div className="flex flex-col items-center justify-center h-screen bg-[#020617] text-white">
-    <h1 className="text-2xl font-bold text-emerald-500">Sala de Tránsito (Gateway)</h1>
-    <p className="text-slate-400 mt-2">Próximamente: Selector de Workspaces</p>
   </div>
 );
 
@@ -72,9 +66,9 @@ export const router = createBrowserRouter([
     path: '/',
     // Permitimos acceso a cualquier rol validado. 
     // Fallback al login en caso de que un usuario no autenticado llegue aquí por error.
-    element: <ProtectedRoute allowedRoles={['owner', 'engineer', 'member']} fallbackPath="/login" />,
+    element: <ProtectedRoute fallbackPath="/login" />,
     children: [
-      { path: 'gateway', element: <GatewayStub /> },
+      { path: 'gateway', element: <GatewayPage /> },
       { path: 'profile', element: <ProfileStub /> },
     ]
   },
