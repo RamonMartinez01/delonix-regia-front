@@ -8,8 +8,10 @@ import {
   ChevronLeft, 
   ChevronRight,
   Database,
-  UserCircle
+  UserCircle,
+  LogOut
 } from 'lucide-react';
+import { useLogout } from '../features/auth/api/logout';
 
 export const Sidebar = () => {
   const role = useAuthStore((state) => state.getActiveRole());
@@ -17,6 +19,9 @@ export const Sidebar = () => {
 
   // Para saber si el usuario está viendo el AppLayout o VHubLayout
   const location = useLocation();
+
+  // Activa la función
+  const logoutMutation = useLogout();
 
   // Definición de rutas con su lógica de visibilidad
   const menuItems = [
@@ -93,6 +98,22 @@ export const Sidebar = () => {
           <UserCircle size={22} />
           {isSidebarOpen && <span className="text-sm truncate">Mi Perfil</span>}
         </NavLink>
+
+        {/* ⚡ 4. El Botón de Eyección */}
+        <button
+          onClick={() => logoutMutation.mutate()}
+          disabled={logoutMutation.isPending}
+          className={`
+            w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
+            text-slate-400 hover:bg-rose-500/10 hover:text-rose-400 disabled:opacity-50
+            ${!isSidebarOpen ? 'justify-center' : ''}
+          `}
+          title="Cerrar Sesión"
+        >
+          <LogOut size={22} className={logoutMutation.isPending ? 'animate-pulse' : ''} />
+          {isSidebarOpen && <span className="text-sm truncate">Cerrar Sesión</span>}
+        </button>
+
       </div>
     </aside>
   );
