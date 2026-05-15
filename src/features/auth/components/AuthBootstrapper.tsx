@@ -23,15 +23,17 @@ useEffect(() => {
    // 1. Caso de Éxito: El servidor reconoció la cookie
     if (isSuccess && user) {
       setUser(user);
+
+      const safeWorkspaces = user.workspaces || []
       
       const savedWorkspaceId = getActiveWorkspace();
-      const hasAccessToSaved = user.workspaces.some(ws => ws.workspace_id === savedWorkspaceId);
+      const hasAccessToSaved = safeWorkspaces.some(ws => ws.workspace_id === savedWorkspaceId);
 
       if (savedWorkspaceId && hasAccessToSaved) {
         setActiveWorkspaceId(savedWorkspaceId);
-      } else if (user.workspaces.length > 0) {
-        const ownerWS = user.workspaces.find(ws => ws.role.toLowerCase() === 'owner');
-        setActiveWorkspaceId(ownerWS ? ownerWS.workspace_id : user.workspaces[0].workspace_id);
+      } else if (safeWorkspaces.length > 0) {
+        const ownerWS = safeWorkspaces.find(ws => ws.role.toLowerCase() === 'owner');
+        setActiveWorkspaceId(ownerWS ? ownerWS.workspace_id : safeWorkspaces[0].workspace_id);
       }
 
       setIsHydrating(false);
