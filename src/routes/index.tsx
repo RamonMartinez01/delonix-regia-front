@@ -19,10 +19,25 @@ import { RegisterForm } from '../features/auth/components/RegisterForm';
 import { LandingPage } from '../features/marketing/routes/LandingPage'; 
 
 
+
 const NotFoundStub = () => (
   <div className="flex flex-col items-center justify-center h-full">
     <h1 className="text-4xl font-black text-red-500">404</h1>
     <p className="text-slate-400 mt-2">El sector del espacio que buscas no existe.</p>
+  </div>
+);
+
+const GatewayStub = () => (
+  <div className="flex flex-col items-center justify-center h-screen bg-[#020617] text-white">
+    <h1 className="text-2xl font-bold text-emerald-500">Sala de Tránsito (Gateway)</h1>
+    <p className="text-slate-400 mt-2">Próximamente: Selector de Workspaces</p>
+  </div>
+);
+
+const ProfileStub = () => (
+  <div className="flex flex-col items-center justify-center h-screen bg-[#020617] text-white">
+    <h1 className="text-2xl font-bold text-emerald-500">Perfil de Usuario</h1>
+    <p className="text-slate-400 mt-2">Próximamente: Identidad y Accesos</p>
   </div>
 );
 
@@ -43,8 +58,26 @@ export const router = createBrowserRouter([
 
   // ------------------------------------------------------------
   // SECTOR BETA: Invitaciones (Acceso Híbrido)
+ 
   // ------------------------------------------------------------
-  { path: '/invite', element: <AcceptInvitation /> },
+  { path: '/invite', 
+  // es una ruta pública, pero necesita un token generado por un 
+  // usario existente, por eso le llamamos (Híbrido)
+    element: <AcceptInvitation /> },
+
+  // ------------------------------------------------------------
+  // SECTOR EPSILON: Espacio Común (TODOS LOS ROLES)
+  // ------------------------------------------------------------
+  {
+    path: '/',
+    // Permitimos acceso a cualquier rol validado. 
+    // Fallback al login en caso de que un usuario no autenticado llegue aquí por error.
+    element: <ProtectedRoute allowedRoles={['owner', 'engineer', 'member']} fallbackPath="/login" />,
+    children: [
+      { path: 'gateway', element: <GatewayStub /> },
+      { path: 'profile', element: <ProfileStub /> },
+    ]
+  },
 
   // ------------------------------------------------------------
   // SECTOR GAMMA: Ingeniería (OWNER / ENGINEER)
