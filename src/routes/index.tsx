@@ -18,6 +18,7 @@ import { ModelsPage } from '../features/models/routes/ModelsPage';
 import { RegisterForm } from '../features/auth/components/RegisterForm'; 
 import { LandingPage } from '../features/marketing/routes/LandingPage'; 
 import { GatewayPage } from '../features/auth/components/GatewayPage';
+import { ProfilePage } from '../features/profile/routes/ProfilePage';
 
 
 
@@ -27,14 +28,6 @@ const NotFoundStub = () => (
     <p className="text-slate-400 mt-2">El sector del espacio que buscas no existe.</p>
   </div>
 );
-
-const ProfileStub = () => (
-  <div className="flex flex-col items-center justify-center h-screen bg-[#020617] text-white">
-    <h1 className="text-2xl font-bold text-emerald-500">Perfil de Usuario</h1>
-    <p className="text-slate-400 mt-2">Próximamente: Identidad y Accesos</p>
-  </div>
-);
-
 // --- Configuración del Enrutador ---
 export const router = createBrowserRouter([
   // ------------------------------------------------------------
@@ -69,7 +62,7 @@ export const router = createBrowserRouter([
     element: <ProtectedRoute fallbackPath="/login" />,
     children: [
       { path: 'gateway', element: <GatewayPage /> },
-      { path: 'profile', element: <ProfileStub /> },
+      
     ]
   },
 
@@ -86,7 +79,8 @@ export const router = createBrowserRouter([
           { path: '', element: <Dashboard /> },
           { path: 'projects/:projectId', element: <ProjectDetail /> },
           { path: 'team', element: <TeamPage /> },
-          { path: 'models', element: <ModelsPage /> }
+          { path: 'models', element: <ModelsPage /> },
+          { path: 'profile', element: <ProfilePage /> },
         ]
       }
     ]
@@ -103,7 +97,8 @@ export const router = createBrowserRouter([
         element: <VHubLayout />,
         children: [
           { path: '', element: <VHubDashboard /> },
-          { path: 'project/:projectId', element: <VHubPlayground /> }
+          { path: 'project/:projectId', element: <VHubPlayground /> },
+          { path: 'profile', element: <ProfilePage /> },
         ]
       }
     ]

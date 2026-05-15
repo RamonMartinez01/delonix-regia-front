@@ -1,7 +1,7 @@
 // src/widgets/Sidebar.tsx
 import { useAuthStore } from '../stores/authStore';
 import { useUIStore } from '../stores/uiStore';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -14,6 +14,9 @@ import {
 export const Sidebar = () => {
   const role = useAuthStore((state) => state.getActiveRole());
   const { isSidebarOpen, toggleSidebar } = useUIStore();
+
+  // Para saber si el usuario está viendo el AppLayout o VHubLayout
+  const location = useLocation();
 
   // Definición de rutas con su lógica de visibilidad
   const menuItems = [
@@ -36,6 +39,10 @@ export const Sidebar = () => {
       show: true 
     },
   ];
+
+  // Construimos la ruta dinámica del perfil basada en la URL actual
+  const isVHub = location.pathname.startsWith('/v-hub');
+  const profileRoute = isVHub ? '/v-hub/profile' : '/dashboard/profile';
 
   return (
     <aside 
@@ -75,8 +82,13 @@ export const Sidebar = () => {
       {/* Footer: Perfil del Usuario */}
       <div className="p-4 border-t border-slate-800">
         <NavLink 
-          to="/profile" 
-          className="flex items-center gap-3 text-slate-400 hover:text-white transition-colors"
+          to={profileRoute} 
+          className={({ isActive }) => `
+            flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
+            ${isActive 
+              ? 'bg-emerald-500/10 text-emerald-400 font-medium' 
+              : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'}
+          `}
         >
           <UserCircle size={22} />
           {isSidebarOpen && <span className="text-sm truncate">Mi Perfil</span>}
