@@ -1,6 +1,8 @@
 // src/features/auth/components/LoginForm.tsx
 import { useState } from 'react';
 import { useLogin } from '../api/login';
+import { Link } from 'react-router-dom'
+import { ArrowLeft } from 'lucide-react'
 
 export const LoginForm = () => {
   // Estado local estrictamente para los inputs controlados
@@ -59,14 +61,24 @@ export const LoginForm = () => {
           required
         />
       </div>
+      <div className="space-y-3 pt-2">
+        <button
+          type="submit"
+          disabled={isPending}
+          className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+        >
+          {isPending ? 'Autenticando...' : 'Iniciar Sesión'}
+        </button>
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
-      >
-        {isPending ? 'Autenticando...' : 'Iniciar Sesión'}
-      </button>
+         {/* Botón Secundario (Outline/Ghost) apuntando al Landing Page */}
+          <Link
+            to="/"
+            className="w-full group flex items-center justify-center gap-2 bg-transparent border border-slate-700 hover:border-slate-500 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-bold py-4 rounded-xl transition-all active:scale-95"
+          >
+            <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
+            Cancelar
+          </Link>
+      </div>
     </form>
   );
 };
