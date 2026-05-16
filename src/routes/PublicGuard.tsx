@@ -11,20 +11,20 @@ export const PublicGuard = () => {
   if (user) {
     const role = getActiveRole();
 
-    // LA EXCEPCIÓN DE SOBERANÍA:
-    // Si el usuario es un invitado (MEMBER/ENGINEER) y está intentando
-    // entrar a /register, le permitimos el paso para que realice su "Upgrade".
+   // EXCEPCIONES DE TERRITORIO NEUTRAL:
     const isAttemptingUpgrade = location.pathname === '/register' && role !== 'owner';
+    // Agregamos el Landing Page como zona permitida
+    const isLandingPage = location.pathname === '/'; 
 
-    if (isAttemptingUpgrade) {
+    // Si cumple alguna de las excepciones, abrimos las puertas
+    if (isAttemptingUpgrade || isLandingPage) {
       return <Outlet />;
     }
 
-    // 3. Para cualquier otro caso (como intentar ir a /login teniendo ya sesión),
-    // lo redirigimos a su puerto base según su rol actual.
+    // Para rutas prohibidas (como /login teniendo sesión), lo redirigimos a su consola.
     return <Navigate to={role === 'member' ? '/v-hub' : '/dashboard'} replace />;
   }
 
-  // 4. Si no hay usuario, el acceso a rutas públicas es libre.
+  // Si no hay usuario, el acceso a rutas públicas es libre.
   return <Outlet />;
 };

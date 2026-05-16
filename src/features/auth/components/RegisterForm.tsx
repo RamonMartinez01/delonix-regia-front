@@ -1,10 +1,10 @@
 // src/features/auth/components/RegisterForm.tsx
-import { useState} from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCheckEmail } from '../api/checkEmail';
 import { useRegister } from '../api/register';
 import { useActivateOwner } from '../api/activateOwner';
-import { UserPlus, ArrowRight, Loader2, AlertCircle, ShieldCheck } from 'lucide-react';
+import { UserPlus, ArrowRight, ArrowLeft, Loader2, AlertCircle, ShieldCheck } from 'lucide-react';
 
 export const RegisterForm = () => {
   const [email, setEmail] = useState('');
@@ -45,14 +45,14 @@ export const RegisterForm = () => {
           {isUpgradeMode ? 'Activar Centro de Operaciones ML' : 'Crear tu Workspace'}
         </h2>
         <p className="text-slate-400 mt-2">
-          {isUpgradeMode 
-            ? `Hola ${status.full_name}, reclama tu workspace personal.` 
+          {isUpgradeMode
+            ? `Hola ${status.full_name}, reclama tu workspace personal.`
             : 'Inicia la orquestación de tus modelos hoy mismo.'}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6 bg-slate-800/40 p-8 rounded-2xl border border-slate-700/50 backdrop-blur-xl shadow-2xl">
-        
+
         {/* Mensaje para usuarios que ya son dueños */}
         {isAlreadyOwner && (
           <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl text-blue-400 text-sm flex items-start gap-3">
@@ -104,17 +104,30 @@ export const RegisterForm = () => {
           </div>
         </div>
 
-        <button
-          disabled={isPending || isAlreadyOwner || isChecking}
-          className="w-full group relative flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-white font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.1)] active:scale-95"
-        >
-          {isPending ? <Loader2 className="animate-spin" size={20} /> : (
-            <>
-              {isUpgradeMode ? 'Activar mi Workspace' : 'Registrarme'}
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </>
-          )}
-        </button>
+        {/* ⚡ LA ESCOTILLA DE ESCAPE: Contenedor de acciones */}
+        <div className="space-y-3 pt-2">
+          <button
+            type="submit"
+            disabled={isPending || isAlreadyOwner || isChecking}
+            className="w-full group relative flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 disabled:bg-slate-700 text-white font-bold py-4 rounded-xl transition-all shadow-[0_0_20px_rgba(16,185,129,0.1)] active:scale-95"
+          >
+            {isPending ? <Loader2 className="animate-spin" size={20} /> : (
+              <>
+                {isUpgradeMode ? 'Activar mi Workspace' : 'Registrarme'}
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </>
+            )}
+          </button>
+
+          {/* Botón Secundario (Outline/Ghost) apuntando al Landing Page */}
+          <Link
+            to="/"
+            className="w-full group flex items-center justify-center gap-2 bg-transparent border border-slate-700 hover:border-slate-500 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-bold py-4 rounded-xl transition-all active:scale-95"
+          >
+            <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
+            Cancelar
+          </Link>
+        </div>
       </form>
     </div>
   );

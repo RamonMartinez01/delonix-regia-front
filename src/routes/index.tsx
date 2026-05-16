@@ -17,6 +17,9 @@ import { ModelsPage } from '../features/models/routes/ModelsPage';
 
 import { RegisterForm } from '../features/auth/components/RegisterForm'; 
 import { LandingPage } from '../features/marketing/routes/LandingPage'; 
+import { GatewayPage } from '../features/auth/components/GatewayPage';
+import { ProfilePage } from '../features/profile/routes/ProfilePage';
+
 
 
 const NotFoundStub = () => (
@@ -25,7 +28,6 @@ const NotFoundStub = () => (
     <p className="text-slate-400 mt-2">El sector del espacio que buscas no existe.</p>
   </div>
 );
-
 // --- Configuración del Enrutador ---
 export const router = createBrowserRouter([
   // ------------------------------------------------------------
@@ -43,8 +45,26 @@ export const router = createBrowserRouter([
 
   // ------------------------------------------------------------
   // SECTOR BETA: Invitaciones (Acceso Híbrido)
+ 
   // ------------------------------------------------------------
-  { path: '/invite', element: <AcceptInvitation /> },
+  { path: '/invite', 
+  // es una ruta pública, pero necesita un token generado por un 
+  // usario existente, por eso le llamamos (Híbrido)
+    element: <AcceptInvitation /> },
+
+  // ------------------------------------------------------------
+  // SECTOR EPSILON: Espacio Común (TODOS LOS ROLES)
+  // ------------------------------------------------------------
+  {
+    path: '/',
+    // Permitimos acceso a cualquier rol validado. 
+    // Fallback al login en caso de que un usuario no autenticado llegue aquí por error.
+    element: <ProtectedRoute fallbackPath="/login" />,
+    children: [
+      { path: 'gateway', element: <GatewayPage /> },
+      
+    ]
+  },
 
   // ------------------------------------------------------------
   // SECTOR GAMMA: Ingeniería (OWNER / ENGINEER)
@@ -59,7 +79,8 @@ export const router = createBrowserRouter([
           { path: '', element: <Dashboard /> },
           { path: 'projects/:projectId', element: <ProjectDetail /> },
           { path: 'team', element: <TeamPage /> },
-          { path: 'models', element: <ModelsPage /> }
+          { path: 'models', element: <ModelsPage /> },
+          { path: 'profile', element: <ProfilePage /> },
         ]
       }
     ]
@@ -76,7 +97,8 @@ export const router = createBrowserRouter([
         element: <VHubLayout />,
         children: [
           { path: '', element: <VHubDashboard /> },
-          { path: 'project/:projectId', element: <VHubPlayground /> }
+          { path: 'project/:projectId', element: <VHubPlayground /> },
+          { path: 'profile', element: <ProfilePage /> },
         ]
       }
     ]
