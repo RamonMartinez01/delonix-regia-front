@@ -1,36 +1,63 @@
 // src/features/validation/routes/VHubLayout.tsx
-import { Link, Outlet } from 'react-router-dom';
-import { useAuthStore } from '../../../stores/authStore';
+import { Outlet, useLocation, Link } from 'react-router-dom';
+import { Sidebar } from '../../../widgets/Sidebar';
+import { useActiveWorkspace } from '../../workspaces/api/useActiveWorkspace';
 
 export const VHubLayout = () => {
-  const { user } = useAuthStore();
+  const location = useLocation();
+  const { data: activeWorkspace, isLoading } = useActiveWorkspace();
 
-  return (
-    <div className="min-h-screen bg-slate-950 flex flex-col font-sans">
-      {/* Barra de Navegación Superior (Sin menús laterales complicados) */}
-      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-       {/* Envolvemos el Logo en un Link importado de react-router-dom */}
-        <Link to="/v-hub" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-          <div className="w-8 h-8 rounded bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white font-bold shadow-lg shadow-emerald-500/20">
-            V
-          </div>
-          <h1 className="text-lg font-medium text-slate-200 tracking-wide">
-            Validation<span className="text-emerald-500 font-bold">Hub</span>
-          </h1>
-        </Link>
+  const isVHubRoot = location.pathname === '/v-hub';
+
+ return (
+    <div className="flex h-screen bg-[#020617] text-slate-200 overflow-hidden">
+      
+      {/* ⚡ Inyectamos el Sidebar Camaleónico */}
+      <Sidebar />
+
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden transition-all duration-300">
         
-        {/* Perfil de Azul */}
-        <div className="flex items-center gap-3">
-          <span className="text-sm text-slate-400">Auditora invitada</span>
-          <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-sm font-bold text-slate-300">
-            {user?.full_name?.charAt(0).toUpperCase() || 'U'}
-          </div>
-        </div>
-      </header>
+        {/* El Header Permanente (Estilo Sector Gamma) */}
+        <header className="h-16 border-b border-slate-800/60 flex items-center justify-between px-8 bg-slate-950/20 backdrop-blur-md z-10 shrink-0">
+          <div className="flex items-center gap-3">
+            
+            
 
-      {/* Área de Contenido Principal donde React Router inyectará las páginas */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6 md:p-8">
-        <Outlet />
+            {isVHubRoot ? (
+              <div className="flex items-center gap-2 animate-in slide-in-from-left duration-500">
+                <div className="w-2 h-2 rounded-full bg-blue-500/40 shadow-[0_0_8px_rgba(59,130,246,0.2)]" />
+                <span className="text-sm font-semibold text-slate-400 tracking-wide uppercase">
+                  Centro de Validación
+                </span>
+              </div>
+            ) : (
+              <Link
+                to="/v-hub"
+                className="group flex items-center gap-2 hover:opacity-80 transition-all animate-in fade-in duration-300"
+              >
+                <div className={`w-2 h-2 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.6)] 
+                  ${isLoading ? 'bg-slate-600 animate-pulse' : 'bg-emerald-500'}`}
+                />
+                <span className="text-sm font-bold text-slate-300 group-hover:text-emerald-400 tracking-wide uppercase">
+                  {isLoading ? 'Sincronizando...' : activeWorkspace?.name || 'Workspace'}
+                </span>
+              </Link>
+            )}
+
+            <span className="text-slate-800 mx-2">|</span>
+          </div>
+          
+         
+
+          {/* Insignia de Rol para mantener contexto visual */}
+          <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-xs font-bold text-blue-400 uppercase tracking-wider">
+            Auditor Invitado
+          </div>
+        </header>
+        
+        <div className="flex-1 overflow-y-auto relative z-0 custom-scrollbar p-6 md:p-8">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

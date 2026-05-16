@@ -9,7 +9,8 @@ import {
   ChevronRight,
   Database,
   UserCircle,
-  LogOut
+  LogOut, 
+  CheckSquare
 } from 'lucide-react';
 import { useLogout } from '../features/auth/api/logout';
 
@@ -20,34 +21,27 @@ export const Sidebar = () => {
   // Para saber si el usuario está viendo el AppLayout o VHubLayout
   const location = useLocation();
 
-  // Activa la función
+  // Activa función logout
   const logoutMutation = useLogout();
 
-  // Definición de rutas con su lógica de visibilidad
-  const menuItems = [
-    { 
-      label: 'Proyectos', 
-      path: '/dashboard', 
-      icon: LayoutDashboard, 
-      show: true 
-    },
-    { 
-      label: 'Equipo', 
-      path: '/dashboard/team', 
-      icon: Users, 
-      show: role === 'owner' // El Gran Candado
-    },
-    { 
-      label: 'Modelos ML', 
-      path: '/dashboard/models', 
-      icon: Database, 
-      show: true 
-    },
+  // Menús separados por Sector
+  const gammaMenu = [
+    { label: 'Proyectos', path: '/dashboard', icon: LayoutDashboard, show: true },
+    { label: 'Equipo', path: '/dashboard/team', icon: Users, show: role === 'owner' },
+   // { label: 'Modelos ML', path: '/dashboard/models', icon: Database, show: true },
+  ];
+
+  const deltaMenu = [
+    { label: 'Validaciones', path: '/v-hub', icon: CheckSquare, show: true },
+    // Aquí el MEMBER no ve ni Equipo ni Modelos. 
   ];
 
   // Construimos la ruta dinámica del perfil basada en la URL actual
   const isVHub = location.pathname.startsWith('/v-hub');
   const profileRoute = isVHub ? '/v-hub/profile' : '/dashboard/profile';
+  
+  // Selección del menú a renderizar
+  const activeMenuItems = isVHub ? deltaMenu : gammaMenu;
 
   return (
     <aside 
@@ -64,13 +58,13 @@ export const Sidebar = () => {
           {isSidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
         </button>
       </div>
-
-      {/* Navegación Principal */}
-      <nav className="flex-1 p-3 space-y-2">
-        {menuItems.map((item) => item.show && (
+      
+      <nav className="flex-1 p-3 space-y-2 overflow-y-auto custom-scrollbar">
+        {activeMenuItems.map((item) => item.show && (
           <NavLink
             key={item.path}
             to={item.path}
+            end={item.path === '/dashboard' || item.path === '/v-hub'} 
             className={({ isActive }) => `
               flex items-center gap-3 px-3 py-2 rounded-lg transition-all
               ${isActive 
@@ -78,7 +72,7 @@ export const Sidebar = () => {
                 : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'}
             `}
           >
-            <item.icon size={22} />
+            <item.icon size={22} className="shrink-0" />
             {isSidebarOpen && <span className="truncate">{item.label}</span>}
           </NavLink>
         ))}
