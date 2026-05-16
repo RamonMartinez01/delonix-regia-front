@@ -2,7 +2,7 @@ import { BrainCircuit, Rocket, ShieldCheck, Database } from 'lucide-react';
 
 export const ModelsPage = () => {
   return (
-    <div className="h-[80vh] flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in zoom-in duration-700">
+    <div className="h-[90vh] bg-slate-900 flex flex-col items-center justify-center text-center space-y-8 animate-in fade-in zoom-in duration-700">
       
       {/* Icono Central con Efecto de Pulso */}
       <div className="relative">
@@ -18,7 +18,7 @@ export const ModelsPage = () => {
           Model <span className="text-emerald-500">Registry</span>
         </h1>
         <p className="text-slate-400 text-lg leading-relaxed">
-          Estamos preparando el silo donde podrás gestionar, versionar y auditar cada red neuronal de la flota.
+          Estamos preparando el Entorno donde podrás gestionar, versionar y auditar cada Modelo de la flota.
         </p>
       </div>
 
@@ -42,7 +42,7 @@ export const ModelsPage = () => {
       {/* Badge de Estado */}
       <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[10px] font-bold text-emerald-500 uppercase tracking-widest">
         <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />
-        Fase de Construcción Alpha
+        En Fase de Construcción
       </div>
     </div>
   );
