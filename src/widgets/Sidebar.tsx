@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useUIStore } from '../stores/uiStore';
-import { NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Users,
@@ -61,7 +61,15 @@ export const Sidebar = () => {
       >
         {/* Header de la Sidebar */}
         <div className="p-4 flex items-center justify-between border-b border-slate-800 h-16">
-          {isSidebarOpen && <span className="font-bold text-emerald-500 tracking-wider">DELONIX</span>}
+          {isSidebarOpen && (
+          // Transformamos el span en un Link interactivo
+          <Link 
+            to="/" 
+            className="font-bold text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors"
+          >
+            DELONIX
+          </Link>
+        )}
           <button
             onClick={toggleSidebar}
             className="p-1 hover:bg-slate-800 rounded-md text-slate-400 transition-colors"
@@ -127,13 +135,13 @@ export const Sidebar = () => {
           title="¿Cerrar Sesión?"
         >
           <div className="space-y-6">
-           <div className="flex flex-row items-center  gap-4">
+            <div className="flex flex-row items-center  gap-4">
               <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 shrink-0">
                 <LogOut size={24} />
               </div>
               <p className="text-slate-300 text-sm leading-relaxed mt-1">
-                Estás a punto de salir de la interfaz <span className="font-semibold text-white">Delonix</span>. 
-               
+                Estás a punto de salir de la interfaz <span className="font-semibold text-white">Delonix</span>.
+
               </p>
             </div>
 

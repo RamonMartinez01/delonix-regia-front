@@ -1,8 +1,24 @@
 // src/features/marketing/routes/LandingPage.tsx
 import { Link } from 'react-router-dom';
-import { Terminal, ShieldCheck, Zap, ArrowRight } from 'lucide-react';
+import { Terminal, ShieldCheck, Zap, ArrowRight, UserCircle, LayoutDashboard } from 'lucide-react';
+import { useAuthStore } from '../../../stores/authStore';
 
 export const LandingPage = () => {
+
+  // Contexto de sesión
+  const user = useAuthStore((state) => state.user);
+  const activeWorkspaceId = useAuthStore((state) => state.activeWorkspaceId);
+  const getActiveRole = useAuthStore((state) => state.getActiveRole);
+
+  // Lógica de enrutamiento de retorno
+  const getReturnPath = () => {
+    if (!activeWorkspaceId) return '/gateway';
+    const role = getActiveRole();
+    return role === 'member' ? '/v-hub' : '/dashboard';
+  };
+
+  const returnPath = getReturnPath();
+
   return (
     <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-emerald-500/30">
       
@@ -16,15 +32,34 @@ export const LandingPage = () => {
         </div>
         
         <div className="flex items-center gap-6">
-          <Link to="/login" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
-            Sign In
-          </Link>
-          <Link 
-            to="/register" 
-            className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-emerald-900/20"
-          >
-            Get Started
-          </Link>
+          {/* Renderizado Condicional del Navbar */}
+          {user ? (
+            <>
+              <div className="hidden sm:flex items-center gap-2 text-slate-400 border-r border-slate-700 pr-6">
+                <UserCircle size={18} />
+                <span className="text-sm font-medium">{user.full_name}</span>
+              </div>
+              <Link 
+                to={returnPath} 
+                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-all"
+              >
+                <LayoutDashboard size={16} className="text-emerald-500" />
+                Ir a la Consola
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+                Sign In
+              </Link>
+              <Link 
+                to="/register" 
+                className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-emerald-900/20"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -49,13 +84,24 @@ export const LandingPage = () => {
           </p>
 
           <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-8">
-            <Link 
-              to="/register" 
-              className="group flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-xl shadow-emerald-900/40"
-            >
-              Start Building Now
-              <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-            </Link>
+            {/* ⚡ Renderizado Condicional del CTA Principal */}
+            {user ? (
+              <Link 
+                to={returnPath} 
+                className="group flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-xl shadow-emerald-900/40"
+              >
+                Acceder a Workspace
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            ) : (
+              <Link 
+                to="/register" 
+                className="group flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-xl shadow-emerald-900/40"
+              >
+                Start Building Now
+                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+              </Link>
+            )}
             <button className="px-8 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-xl transition-all">
               Read Documentation
             </button>

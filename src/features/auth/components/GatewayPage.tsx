@@ -8,11 +8,13 @@ export const GatewayPage = () => {
   const setActiveWorkspaceId = useAuthStore((state) => state.setActiveWorkspaceId);
 
   // 2. La Maniobra de Salto
-  const handleSelectWorkspace = (workspaceId: string) => {
+  const handleSelectWorkspace = (workspaceId: string, role: string) => {
     setActiveWorkspaceId(workspaceId);
-    // ⚡ Al hacer window.location, forzamos al AuthBootstrapper a correr de nuevo.
-    // Como ahora YA HAY un workspace guardado, nos dirigirá automáticamente al sector correcto.
-    window.location.href = '/';
+    
+    // Determinamos el destino exacto basado en el rol de este workspace
+  const targetSector = role.toLowerCase() === 'member' ? 'v-hub' : '/dashboard';
+
+  window.location.href = targetSector;
   };
 
   // Fallback de seguridad visual
@@ -52,7 +54,7 @@ export const GatewayPage = () => {
               // Convertimos la tarjeta en un botón interactivo
               <button
                 key={ws.workspace_id}
-                onClick={() => handleSelectWorkspace(ws.workspace_id)}
+                onClick={() => handleSelectWorkspace(ws.workspace_id, ws.role)}
                 className="group text-left block h-full w-full focus:outline-none rounded-xl"
               >
                 <div className="bg-slate-800/80 border border-slate-700 rounded-xl p-6 group-hover:border-emerald-500 transition-all shadow-lg flex flex-col h-full cursor-pointer relative overflow-hidden">
