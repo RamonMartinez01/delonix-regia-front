@@ -34,7 +34,7 @@ useEffect(() => {
       const savedWorkspaceId = getActiveWorkspace();
       const hasAccessToSaved = safeWorkspaces.some(ws => ws.workspace_id === savedWorkspaceId);
 
-      // ⚡ LÓGICA DE INTERCEPCIÓN MULTI-TENANT
+      // LÓGICA DE INTERCEPCIÓN MULTI-TENANT
       if (safeWorkspaces.length === 1) {
         // Caso A: Solo un workspace. Asignación directa y transparente.
         setActiveWorkspaceId(safeWorkspaces[0].workspace_id);
@@ -51,7 +51,7 @@ useEffect(() => {
           // Prevenimos bucles si el usuario ya está en el Sector Epsilon
           if (currentPath !== '/gateway' && currentPath !== '/profile') {
             window.location.href = '/gateway';
-            return; // Detenemos la ejecución durante el salto hiperespacial
+            return; // Detenemos la ejecución durante la elección
           }
         }
       }
@@ -68,7 +68,7 @@ useEffect(() => {
       if (!user) {
         setIsHydrating(false);
       }
-  }, [user, isSuccess, isError, isLoading, setUser, setIsHydrating, setActiveWorkspaceId, logout]); // user, isSuccess, isError, isLoading, setUser, setIsHydrating, setActiveWorkspaceId, logout
+  }, [user, isSuccess, isError, isLoading, setUser, setIsHydrating, setActiveWorkspaceId, logout]); 
 
   return <>{children}</>;
 };
