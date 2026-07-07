@@ -1,5 +1,19 @@
 @import "tailwindcss";
 
+/* Design Tokens (Arquitectura Tailwind v4) */
+@theme {
+  /* Colores de Marca */
+  --color-brand-primary: #E6758B;
+  --color-brand-accent: #F3BAC9;
+  --color-brand-surface: #FFF5F7;
+  --color-brand-canvas: #fefdfd;
+  --color-brand-nav: #fffbfb;
+
+  /* Sistema Tipográfico */
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Figtree", sans-serif;
+}
+
 /* Tipografía Display (Figtree) */
 @import "@fontsource/figtree/300.css";
 @import "@fontsource/figtree/400.css";

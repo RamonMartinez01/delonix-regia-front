@@ -1,54 +1,58 @@
 // src/features/auth/components/LoginForm.tsx
 import { useState } from 'react';
 import { useLogin } from '../api/login';
-import { Link } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { Link } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react';
 
 export const LoginForm = () => {
-  // Estado local estrictamente para los inputs controlados
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const { mutate, isPending, isError } = useLogin();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email || !password) return;
-
     mutate({ email, password });
-  }
-
+  };
 
   return (
-    <form onSubmit={handleSubmit} className="w-full max-w-sm bg-slate-800 p-8 rounded-xl shadow-2xl border border-slate-700">
+    /* Elevación física: Tarjeta blanca pura sobre el lienzo canvas */
+    <form 
+      onSubmit={handleSubmit} 
+      className="w-full max-w-sm bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-[#EAEAE8]"
+    >
+      
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-emerald-400">Delonix Regia</h2>
-        <p className="text-sm text-slate-400 mt-2">Acceso a MLOps</p>
+        <h2 className="text-3xl font-bold font-display text-[#111111] tracking-tight">Delonix Regia</h2>
+        <p className="text-sm font-medium text-[#5A5855] mt-2">Acceso a MLOps</p>
       </div>
 
+      {/* Manejo de error estructurado con contraste cálido */}
       {isError && (
-        <div className="mb-4 p-3 bg-red-900/50 border border-red-500 rounded text-red-200 text-sm text-center">
+        <div className="mb-6 p-4 bg-[#FFF5F7] border border-[#F3BAC9] rounded-xl text-[#D46077] text-sm text-center font-medium">
           Credenciales inválidas o error de conexión.
         </div>
       )}
 
-      <div className="mb-4">
-        <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="email">
+      <div className="mb-5">
+        {/* Jerarquía UI estricta para etiquetas */}
+        <label className="block text-[10px] font-bold uppercase tracking-widest text-[#5A5855] mb-2" htmlFor="email">
           Correo Electrónico
         </label>
+        {/* Input como hendidura física, transición a border-brand-primary al hacer focus */}
         <input
           id="email"
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-600 text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+          className="w-full p-3.5 rounded-xl bg-brand-canvas border border-[#D1D1CD] text-[#111111] focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all placeholder:text-[#A1A19A]"
           placeholder="correo@ejemplo.com"
           required
         />
       </div>
 
-      <div className="mb-6">
-        <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="password">
+      <div className="mb-8">
+        <label className="block text-[10px] font-bold uppercase tracking-widest text-[#5A5855] mb-2" htmlFor="password">
           Contraseña
         </label>
         <input
@@ -56,28 +60,30 @@ export const LoginForm = () => {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 rounded bg-slate-900 border border-slate-600 text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
+          className="w-full p-3.5 rounded-xl bg-brand-canvas border border-[#D1D1CD] text-[#111111] focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all placeholder:text-[#A1A19A]"
           placeholder="********"
           required
         />
       </div>
-      <div className="space-y-3 pt-2">
+
+      <div className="space-y-4">
+        {/* CTA Principal usando nuestro token semántico */}
         <button
           type="submit"
           disabled={isPending}
-          className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 px-4 rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+          className="w-full bg-brand-primary hover:bg-[#D46077] text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-sm hover:shadow-md hover:-translate-y-[1px] disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
         >
           {isPending ? 'Autenticando...' : 'Iniciar Sesión'}
         </button>
 
-         {/* Botón Secundario (Outline/Ghost) apuntando al Landing Page */}
-          <Link
-            to="/"
-            className="w-full group flex items-center justify-center gap-2 bg-transparent border border-slate-700 hover:border-slate-500 hover:bg-slate-800 text-slate-400 hover:text-slate-200 font-bold py-4 rounded-xl transition-all active:scale-95"
-          >
-            <ArrowLeft size={18} className="transition-transform group-hover:-translate-x-1" />
-            Cancelar
-          </Link>
+        {/* Botón Secundario: Contraste táctil invertido */}
+        <Link
+          to="/"
+          className="w-full group flex items-center justify-center gap-2 bg-white border border-[#D1D1CD] hover:bg-[#F7F7F5] text-[#111111] font-bold py-3.5 rounded-xl transition-all hover:-translate-y-[1px]"
+        >
+          <ArrowLeft size={16} className="transition-transform group-hover:-translate-x-1 text-[#5A5855] group-hover:text-[#111111]" />
+          <span className="text-sm">Cancelar</span>
+        </Link>
       </div>
     </form>
   );

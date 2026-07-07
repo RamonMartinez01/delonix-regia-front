@@ -38,8 +38,8 @@ export const router = createBrowserRouter([
     element: <PublicGuard />,
     children: [
       { path: '/', element: <LandingPage /> },
-      { path: '/login', element: <div className="flex items-center justify-center h-screen bg-[#020617]"><LoginForm /></div> },
-      { path: '/register', element: <div className="flex items-center justify-center h-screen bg-[#020617]"><RegisterForm /></div> },
+      { path: '/login', element: <div className="flex items-center justify-center min-h-screen bg-brand-canvas font-sans text-[#111111]"><LoginForm /></div> },
+      { path: '/register', element: <div className="flex items-center justify-center min-h-screen bg-brand-canvas font-sans text-[#111111]"><RegisterForm /></div> },
     ]
   },
 
