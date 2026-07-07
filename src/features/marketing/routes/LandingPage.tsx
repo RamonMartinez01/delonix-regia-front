@@ -4,13 +4,10 @@ import { Terminal, ShieldCheck, Zap, ArrowRight, UserCircle, LayoutDashboard } f
 import { useAuthStore } from '../../../stores/authStore';
 
 export const LandingPage = () => {
-
-  // Contexto de sesión
   const user = useAuthStore((state) => state.user);
   const activeWorkspaceId = useAuthStore((state) => state.activeWorkspaceId);
   const getActiveRole = useAuthStore((state) => state.getActiveRole);
 
-  // Lógica de enrutamiento de retorno
   const getReturnPath = () => {
     if (!activeWorkspaceId) return '/gateway';
     const role = getActiveRole();
@@ -20,41 +17,41 @@ export const LandingPage = () => {
   const returnPath = getReturnPath();
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-emerald-500/30">
+    /* Lienzo Base: Papel mate de fondo para maximizar el contraste pasivo. */
+    <div className="min-h-screen bg-[#fefdfd] text-[#111111] font-sans selection:bg-[#F3BAC9]/40">{/**1) bg-[#F7F7F5] 2)#fffbfb 3)#fffcfe 4)#fefdfd */}
       
-      {/* 1. NAVEGACIÓN MINIMALISTA */}
-      <nav className="flex justify-between items-center px-8 h-20 border-b border-slate-800/50 backdrop-blur-md sticky top-0 z-50">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-emerald-500/10 border border-emerald-500/40 rounded-lg flex items-center justify-center">
-            <span className="text-emerald-500 font-black text-xl">D</span>
+      {/* 1. NAVEGACIÓN */}
+      <nav className="flex justify-between items-center px-4 md:px-8 h-20 border-b border-[#EAEAE8] bg-[#fffbfb] sticky top-0 z-50"> {/**ffffff bg-[#F7F7F5] */}
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 bg-white border border-[#D1D1CD] rounded-xl flex items-center justify-center shadow-sm">
+            <span className="text-[#E6758B] font-black text-xl font-display">D</span>
           </div>
-          <span className="font-mono font-bold tracking-tighter text-xl">DELONIX-REGIA</span>
+          <span className="font-display font-bold tracking-tighter text-xl text-[#111111]">DELONIX</span>
         </div>
         
-        <div className="flex items-center gap-6">
-          {/* Renderizado Condicional del Navbar */}
+        <div className="flex items-center gap-4 md:gap-6">
           {user ? (
             <>
-              <div className="hidden sm:flex items-center gap-2 text-slate-400 border-r border-slate-700 pr-6">
+              <div className="hidden sm:flex items-center gap-2 text-[#3A3835] border-r border-[#EAEAE8] pr-6">
                 <UserCircle size={18} />
-                <span className="text-sm font-medium">{user.full_name}</span>
+                <span className="text-sm font-medium tracking-wide">{user.full_name}</span>
               </div>
               <Link 
                 to={returnPath} 
-                className="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-bold transition-all"
+                className="flex items-center gap-2 bg-white hover:bg-[#F7F7F5] border border-[#D1D1CD] text-[#111111] px-4 py-2 rounded-xl text-sm font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-[1px]"
               >
-                <LayoutDashboard size={16} className="text-emerald-500" />
+                <LayoutDashboard size={16} className="text-[#E6758B]" />
                 Ir a la Consola
               </Link>
             </>
           ) : (
             <>
-              <Link to="/login" className="text-sm font-medium text-slate-400 hover:text-white transition-colors">
+              <Link to="/login" className="text-[11px] font-bold text-[#5A5855] hover:text-[#111111] transition-colors uppercase tracking-widest">
                 Sign In
               </Link>
               <Link 
                 to="/register" 
-                className="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all shadow-lg shadow-emerald-900/20"
+                className="bg-[#E6758B] hover:bg-[#D46077] text-white px-5 py-2.5 rounded-xl text-sm font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-[1px]"
               >
                 Get Started
               </Link>
@@ -64,31 +61,34 @@ export const LandingPage = () => {
       </nav>
 
       {/* 2. HERO SECTION */}
-      <main className="max-w-6xl mx-auto px-8 pt-24 pb-16">
-        <div className="text-center space-y-8">
-          {/* Badge Técnico */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-bold uppercase tracking-[0.2em] animate-fade-in">
-            <Zap size={12} /> Version 1.0.4 Ready for Deployment
-          </div>
+      {/* Mobile-First: Compresión en móviles (px-4) y expansión en escritorio (md:px-8). */}
+      <main className="max-w-6xl mx-auto px-4 md:px-8 pt-16 md:pt-28 pb-16">
+        <div className="text-center space-y-6 md:space-y-8">
+          
+          {/* Badge Técnico (UI Metadatos: uppercase, tracking-widest, text-xs[cite: 1]). 
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white border border-[#EAEAE8] text-[#5A5855] text-[10px] font-bold uppercase tracking-widest shadow-sm">
+            <Zap size={12} className="text-[#E6758B]" /> 
+            <span>Version 1.0.4 Ready for Deployment</span>
+          </div>*/}
 
-          <h1 className="text-6xl md:text-7xl font-black tracking-tighter leading-none text-white">
-            MLOps Validation <br /> 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-500">
+          {/* Título */}
+          <h1 className="text-5xl md:text-7xl font-medium tracking-tight leading-[1.05] text-[#111111] font-display"> {/** font-['Space_Grotesk'] */}
+            MLOps Validation <br className="hidden md:block" /> 
+            <span className="text-[#E6758B] font-bold ">
               For the Real World.
             </span>
           </h1>
 
-          <p className="max-w-2xl mx-auto text-slate-400 text-lg md:text-xl font-medium leading-relaxed">
-            Cierra el bucle de entrenamiento. Conecta tus modelos de Hugging Face con 
-            feedback humano en tiempo real en entornos de validación soberanos.
+          {/* Pitch: Interlineado amplio, gris cálido para evitar fatiga visual[cite: 1]. */}
+          <p className="max-w-2xl mx-auto text-[#3A3835] text-base md:text-xl font-medium leading-relaxed">
+            Cierra el ciclo. Conecta tus modelos de Hugging Face con retroalimentación humana en tiempo real, en entornos de validación bajo tu control.
           </p>
 
-          <div className="flex flex-col md:flex-row items-center justify-center gap-4 pt-8">
-            {/* ⚡ Renderizado Condicional del CTA Principal */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-6 pt-8">
             {user ? (
               <Link 
                 to={returnPath} 
-                className="group flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-xl shadow-emerald-900/40"
+                className="group flex w-full sm:w-auto justify-center items-center gap-2 px-8 py-4 bg-[#E6758B] hover:bg-[#D46077] text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-lg hover:-translate-y-1"
               >
                 Acceder a Workspace
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
@@ -96,50 +96,58 @@ export const LandingPage = () => {
             ) : (
               <Link 
                 to="/register" 
-                className="group flex items-center gap-2 px-8 py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl transition-all shadow-xl shadow-emerald-900/40"
+                className="group flex w-full sm:w-auto justify-center items-center gap-2 px-8 py-4 bg-[#E6758B] hover:bg-[#D46077] text-white font-bold rounded-xl transition-all shadow-sm hover:shadow-lg hover:-translate-y-1"
               >
                 Start Building Now
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
             )}
-            <button className="px-8 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-xl transition-all">
+            <button className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-[#F7F7F5] border border-[#D1D1CD] text-[#111111] font-bold rounded-xl transition-all shadow-sm hover:shadow-md hover:-translate-y-[1px]">
               Read Documentation
             </button>
           </div>
         </div>
 
-        {/* 3. FEATURE CARDS (THE CORE) */}
-        <div className="grid md:grid-cols-3 gap-6 mt-32">
+       {/* 3. FEATURE CARDS (THE CORE) */}
+        {/* Espaciado responsivo estricto (gap-6 en móvil, expandiendo en escritorio) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10 mt-20 md:mt-32">
           {[
             {
-              icon: <Terminal className="text-emerald-500" />,
+              icon: <Terminal size={24} className="text-[#E6758B]" />,
               title: "Sovereign Hosting",
               desc: "Infrastructure designed for privacy and decentralization."
             },
             {
-              icon: <ShieldCheck className="text-emerald-500" />,
+              icon: <ShieldCheck size={24} className="text-[#E6758B]" />,
               title: "Human-in-the-loop",
               desc: "Real-time UAT interfaces for non-technical stakeholders."
             },
             {
-              icon: <Zap className="text-emerald-500" />,
+              icon: <Zap size={24} className="text-[#E6758B]" />,
               title: "Hugging Face Sync",
               desc: "Instant integration with your latest model checkpoints."
             }
           ].map((feature, idx) => (
-            <div key={idx} className="p-8 bg-slate-900/50 border border-slate-800 rounded-2xl hover:border-emerald-500/30 transition-all group">
-              <div className="mb-4 p-3 bg-slate-950 rounded-xl inline-block group-hover:scale-110 transition-transform">
+            
+            <div key={idx} className="p-8 bg-[#FFF5F7] border border-[#EAEAE8] rounded-2xl hover:border-[#F3BAC9] hover:shadow-lg hover:-translate-y-1 transition-all group">
+              
+              <div className="mb-6 p-4 bg-white border border-[#EAEAE8] rounded-xl inline-flex shadow-sm group-hover:scale-105 group-hover:bg-[#F3BAC9]/15 transition-transform">
                 {feature.icon}
               </div>
-              <h3 className="text-lg font-bold text-white mb-2">{feature.title}</h3>
-              <p className="text-slate-500 text-sm leading-relaxed">{feature.desc}</p>
+              
+              <h3 className="text-xl font-bold text-[#111111] mb-3 font-display">
+                {feature.title}
+              </h3>
+              <p className="text-[#3A3835] text-sm leading-relaxed">
+                {feature.desc}
+              </p>
             </div>
           ))}
         </div>
       </main>
 
       {/* FOOTER */}
-      <footer className="mt-20 py-10 border-t border-slate-800/50 text-center text-slate-600 text-[10px] font-mono tracking-widest uppercase">
+      <footer className="mt-20 py-10 border-t border-[#EAEAE8] text-center text-[#5A5855] text-[10px] font-sans tracking-widest uppercase">
         © 2026 Delonix-Regia // Distributed Systems Division
       </footer>
     </div>
