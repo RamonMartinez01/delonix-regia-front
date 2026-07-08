@@ -78,7 +78,7 @@ export const ProfilePage = () => {
                 <span className="text-[10px] font-bold uppercase tracking-widest">Entorno Activo</span>
               </div>
               {/* Resaltamos el entorno activo con nuestro token de marca */}
-              <p className="text-base font-bold text-brand-primary bg-brand-surface p-3.5 rounded-xl border border-[#F3BAC9] truncate" title={activeWorkspace?.workspace_name}>
+              <p className="text-base font-bold text-brand-primary bg-brand-surface p-3.5 rounded-xl border border-brand-accent truncate" title={activeWorkspace?.workspace_name}>
                 {activeWorkspace?.workspace_name || `ID: ${activeWorkspace?.workspace_id.split('-')[0]}`}
               </p>
             </div>
@@ -125,7 +125,7 @@ export const ProfilePage = () => {
                         </span>
                       </div>
                       
-                      <h3 className="text-lg font-bold font-display text-[#111111] mb-2 truncate max-w-[200px]">
+                      <h3 className="text-lg font-bold font-display text-[#111111] mb-2 truncate max-w-50">
                         {ws.workspace_name || `Entorno ${ws.workspace_id.split('-')[0]}`}
                       </h3>
                       
