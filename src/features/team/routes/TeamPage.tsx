@@ -1,71 +1,80 @@
 // src/features/team/routes/TeamPage.tsx
 import { useState } from 'react';
 import { useTeamMatrix } from '../hooks/useTeamMatrix';
-import { Users, Plus } from 'lucide-react';
+import { Users, Plus, Loader2, AlertCircle } from 'lucide-react';
 import { TeamTable } from '../components/TeamTable';
 import { InvitationList } from '../components/InvitationList';
 import { Modal } from '../../../components/ui/Modal';
 import { CreateInvitationForm } from '../../invitations/components/CreateInvitationForm';
 
-
 export const TeamPage = () => {
   const { data, isLoading, isError } = useTeamMatrix();
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
+  // ESTADO DE CARGA: Minimalismo Técnico
   if (isLoading || !data) {
     return (
-      <div className="flex flex-col items-center justify-center h-64 text-slate-400">
-        <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-emerald-500 mb-4" />
-        <p className="text-sm tracking-widest animate-pulse">Sincronizando matriz de equipo...</p>
+      <div className="flex flex-col items-center justify-center h-[60vh] text-[#A1A19A]">
+        <Loader2 className="animate-spin mb-4 text-brand-primary" size={32} />
+        <p className="text-[10px] tracking-widest font-bold uppercase text-[#5A5855] animate-pulse">
+          Sincronizando matriz de equipo...
+        </p>
       </div>
     );
   }
 
+  // ESTADO DE ERROR: Alerta cálida, no destructiva
   if (isError) {
     return (
-      <div className="p-8 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400">
-        Error al cargar los datos del equipo. Verifica tu conexión o permisos.
+      <div className="p-6 md:p-10">
+        <div className="p-5 bg-brand-surface border border-brand-accent rounded-xl text-[#D46077] flex items-start gap-3 shadow-sm">
+          <AlertCircle size={20} strokeWidth={2.5} className="shrink-0 mt-0.5" />
+          <p className="font-medium text-sm">
+            Error al cargar los datos del equipo. Verifica tu conexión o permisos.
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 p-8">
-      <div className="space-y-8 animate-in fade-in duration-500">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+    /* Delegamos el fondo oscuro al AppLayout. Establecemos los márgenes editoriales. */
+    <div className="p-6 md:p-10 text-[#111111]">
+      <div className="space-y-10 animate-in fade-in duration-500">
+        
+        {/* CABECERA EDITORIAL */}
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#EAEAE8] pb-6">
           <div>
-            <h1 className="text-3xl font-bold text-slate-100 flex items-center gap-3">
-              <Users className="text-emerald-500" size={32} />
+            <h1 className="text-3xl md:text-4xl font-bold font-display text-[#111111] tracking-tight flex items-center gap-3">
+              {/* Ícono anclado en un bloque físico */}
+              <div className="p-2 bg-white border border-[#D1D1CD] rounded-xl shadow-sm">
+                <Users className="text-[#111111]" size={24} strokeWidth={2.5} />
+              </div>
               Gestión de Equipo
             </h1>
-            <p className="text-slate-400 mt-1">
+            <p className="text-[#5A5855] font-medium mt-3 md:mt-2 text-sm md:text-base">
               Administra los colaboradores y las invitaciones de este workspace.
             </p>
           </div>
 
-          {/**
-           * 
-           * bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-lg font-bold transition-all flex items-center gap-2 shadow-lg shadow-emerald-900/20 active:scale-95 */}
+          {/* BOTÓN DE ACCIÓN: Táctil, alineado con el botón de "Nuevo Proyecto" */}
           <button
             onClick={() => setIsInviteModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 
-              bg-slate-700 hover:bg-slate-900 
-              border border-emerald-500/30 hover:border-emerald-500/60 
-              text-emerald-400 font-bold text-sm 
-              rounded-xl transition-all duration-200 
-              active:scale-95"
+            className="w-full md:w-auto group flex items-center justify-center gap-2 bg-brand-primary hover:bg-[#D46077] text-white px-6 py-3 rounded-xl font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-px active:scale-95"
           >
-            <Plus size={20} />
+            <Plus size={18} className="transition-transform group-hover:rotate-90" />
             Invitar Colaborador
           </button>
         </header>
 
-        <TeamTable members={data?.members ?? []} />
-
-        <InvitationList invitations={data?.pending_invitations ?? []} />
+        {/* CONTENEDORES DE DATOS */}
+        <div className="space-y-12">
+          <TeamTable members={data?.members ?? []} />
+          <InvitationList invitations={data?.pending_invitations ?? []} />
+        </div>
       </div>
 
-      {/* MODAL DE INVITACIÓN */}
+      {/* MODAL DE INVITACIÓN (Ahora hereda la estética premium automáticamente) */}
       <Modal
         isOpen={isInviteModalOpen}
         onClose={() => setIsInviteModalOpen(false)}
