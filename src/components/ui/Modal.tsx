@@ -6,38 +6,41 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  children: React.ReactNode; // Aquí es donde vive la magia del reciclaje
+  children: React.ReactNode;
 }
 
 export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
   if (!isOpen) return null;
 
- return (
-    // Backdrop: Aumentamos el desenfoque para aislar la zona de trabajo
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-[#020617]/80 backdrop-blur-md animate-in fade-in duration-300">
+  return (
+    /* * Backdrop: Erradicamos el neón oscuro. 
+     * Usamos un gris carbón atenuado con una opacidad controlada.
+     * Mantenemos un fade-in sutil para dar suavidad física al aparecer.
+     */
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111111]/40 animate-in fade-in duration-200">
       
-      {/* Contenedor del Modal: Estética de Cristal Oscuro */}
-      <div className="bg-slate-900/90 border border-slate-700/50 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden relative backdrop-blur-xl animate-in zoom-in-95 duration-300">
-        
-        {/* Glow sutil de fondo para dar profundidad */}
-        <div className="absolute -top-24 -left-24 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+      {/* * Contenedor del Modal: Estética de Papel Premium Eleva.
+       * Eliminamos el 'backdrop-blur-xl', el 'bg-slate-900/90' y los glows esmeralda.
+       */}
+      <div className="bg-white border border-[#EAEAE8] w-full max-w-md rounded-2xl shadow-xl overflow-hidden relative animate-in zoom-in-95 duration-200">
         
         {/* Header: Más espaciado y tipografía refinada */}
-        <div className="flex justify-between items-center p-6 border-b border-slate-800/60 relative z-10">
-          <h2 className="text-lg font-bold text-slate-100 tracking-tight flex items-center gap-2">
-            <div className="w-1.5 h-4 bg-emerald-500 rounded-full" /> {/* Acento visual */}
+        <div className="flex justify-between items-center p-6 border-b border-[#EAEAE8] relative z-10">
+          <h2 className="text-lg font-bold font-display text-[#111111] tracking-tight flex items-center gap-2">
+            {/* El acento visual cambia a nuestro token de marca semántico */}
+            <div className="w-1 h-4 bg-brand-primary rounded-full" /> 
             {title}
           </h2>
           <button 
             onClick={onClose}
-            className="p-2 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-all active:scale-90"
+            className="p-1.5 text-[#A1A19A] hover:text-[#111111] hover:bg-[#F7F7F5] rounded-xl transition-all active:scale-95"
           >
-            <X size={20} />
+            <X size={18} strokeWidth={2.5} />
           </button>
         </div>
 
         {/* Body: Espaciado optimizado para el contenido inyectado */}
-        <div className="p-6 relative z-10">
+        <div className="p-6 relative z-10 text-[#5A5855] text-sm">
           {children}
         </div>
 
