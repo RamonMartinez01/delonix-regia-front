@@ -1,6 +1,8 @@
 // src/features/projects/components/CreateProjectModal.tsx
 import { useState } from 'react';
 import { useCreateProject } from '../api/createProject';
+import { Modal } from '../../../components/ui/Modal'; // Importamos el cascarón oficial
+import { AlertCircle, Plus } from 'lucide-react';
 
 interface CreateProjectModalProps {
   isOpen: boolean;
@@ -8,26 +10,19 @@ interface CreateProjectModalProps {
 }
 
 export const CreateProjectModal = ({ isOpen, onClose }: CreateProjectModalProps) => {
-  // Estado local para los campos del formulario
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   
-  // Nuestro misil asíncrono preparado para disparar
   const { mutate, isPending, isError } = useCreateProject();
-
-  // Si el interruptor está apagado, no renderizamos absolutamente nada
-  if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
 
-    // Disparamos la mutación hacia FastAPI
     mutate(
       { name, description },
       {
         onSuccess: () => {
-          // ¡Éxito! Limpiamos los campos para la próxima vez y cerramos la ventana
           setName('');
           setDescription('');
           onClose();
@@ -37,81 +32,81 @@ export const CreateProjectModal = ({ isOpen, onClose }: CreateProjectModalProps)
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-slate-800 border border-slate-700 rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <Modal isOpen={isOpen} onClose={onClose} title="Nuevo Proyecto">
+      
+      <form onSubmit={handleSubmit} className="space-y-6 pt-2">
         
-        {/* Cabecera del Modal */}
-        <div className="flex justify-between items-center p-6 border-b border-slate-700">
-          <h2 className="text-xl font-bold text-emerald-400">Nuevo Proyecto</h2>
-          <button 
-            onClick={onClose}
-            className="text-slate-400 hover:text-slate-200 transition-colors"
+        {/* Alerta de Error: Neutra y clara, alineada con el resto del sistema */}
+        {isError && (
+          <div className="p-4 bg-brand-surface border border-brand-accent rounded-xl flex items-center gap-3 text-[#D46077] text-sm font-medium shadow-sm animate-in shake duration-300">
+            <AlertCircle size={18} strokeWidth={2.5} />
+            <p>Hubo un error al crear el proyecto. Verifica que el nombre no esté duplicado.</p>
+          </div>
+        )}
+
+        {/* Input: Hendidura física */}
+        <div>
+          <label className="block text-[10px] font-bold text-[#A1A19A] uppercase tracking-widest mb-2 ml-1" htmlFor="name">
+            Nombre del Proyecto *
+          </label>
+          <input
+            id="name"
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full bg-[#F7F7F5] border border-[#D1D1CD] rounded-xl px-4 py-3 text-[#111111] font-medium focus:outline-none focus:bg-white focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all shadow-inner focus:shadow-sm"
+            placeholder="Ej. Modelo de Predicción v1"
+            required
             disabled={isPending}
-          >
-            ✕
-          </button>
+            autoFocus
+          />
         </div>
 
-        {/* Cuerpo del Formulario */}
-        <form onSubmit={handleSubmit} className="p-6">
-          
-          {isError && (
-            <div className="mb-4 p-3 bg-red-900/50 border border-red-500 rounded text-red-200 text-sm">
-              Hubo un error al crear el proyecto. Verifica que el nombre no esté duplicado.
-            </div>
-          )}
+        {/* Textarea: Misma física que el input */}
+        <div>
+          <label className="block text-[10px] font-bold text-[#A1A19A] uppercase tracking-widest mb-2 ml-1" htmlFor="description">
+            Descripción (Opcional)
+          </label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full bg-[#F7F7F5] border border-[#D1D1CD] rounded-xl px-4 py-3 text-[#111111] font-medium focus:outline-none focus:bg-white focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all shadow-inner focus:shadow-sm resize-none h-24 custom-scrollbar"
+            placeholder="Propósito u objetivo de este modelo..."
+            disabled={isPending}
+          />
+        </div>
 
-          <div className="mb-4">
-            <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="name">
-              Nombre del Proyecto *
-            </label>
-            <input
-              id="name"
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="w-full p-3 rounded bg-slate-900 border border-slate-600 text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors"
-              placeholder="Ej. Modelo de Predicción v1"
-              required
-              disabled={isPending}
-              autoFocus
-            />
-          </div>
+        {/* Pie del Formulario (Controles de Acción) */}
+        <div className="flex justify-end gap-3 pt-5 border-t border-[#EAEAE8] mt-8">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isPending}
+            className="px-5 py-2.5 font-bold text-[#111111] bg-white border border-[#D1D1CD] hover:bg-[#F7F7F5] rounded-xl transition-all active:scale-95 shadow-sm"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            disabled={isPending || !name.trim()}
+            className="px-5 py-2.5 flex items-center gap-2 font-bold text-white bg-brand-primary hover:bg-[#D46077] disabled:bg-[#F7F7F5] disabled:text-[#A1A19A] disabled:border disabled:border-[#D1D1CD] border border-transparent rounded-xl transition-all active:scale-95 shadow-sm"
+          >
+            {isPending ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Creando...
+              </>
+            ) : (
+              <>
+                <Plus size={16} strokeWidth={2.5} />
+                Crear Proyecto
+              </>
+            )}
+          </button>
+        </div>
+      </form>
 
-          <div className="mb-6">
-            <label className="block text-slate-300 text-sm font-bold mb-2" htmlFor="description">
-              Descripción (Opcional)
-            </label>
-            <textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-3 rounded bg-slate-900 border border-slate-600 text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 transition-colors resize-none h-24"
-              placeholder="Propósito u objetivo de este modelo..."
-              disabled={isPending}
-            />
-          </div>
-
-          {/* Pie del Modal (Botones) */}
-          <div className="flex justify-end gap-3 mt-4 pt-4 border-t border-slate-700">
-            <button
-              type="button"
-              onClick={onClose}
-              disabled={isPending}
-              className="px-4 py-2 rounded font-medium text-slate-300 hover:text-slate-100 hover:bg-slate-700 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isPending || !name.trim()}
-              className="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
-            >
-              {isPending ? 'Creando...' : 'Crear Proyecto'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    </Modal>
   );
 };
