@@ -1,20 +1,20 @@
-// src/features/projects/routes/Dashboard.tsx
+// src/features/workspaces/routes/Dashboard.tsx
 import { useEffect, useState } from 'react';
 import { ProjectsList } from '../../projects/components/ProjectsList';
 import { CreateProjectModal } from '../../projects/components/CreateProjectModal';
 
-import { Modal } from '../../../components/ui/Modal'; // La "cáscara" genérica
+import { Modal } from '../../../components/ui/Modal';
 import { CreateInvitationForm } from '../../invitations/components/CreateInvitationForm';
 import { useActiveWorkspace } from '../api/useActiveWorkspace';
 import { useUpdateWorkspace } from '../api/updateWorkspace';
+import { Edit3, Plus } from 'lucide-react'; // Estandarizamos íconos
 
 export const Dashboard = () => {
   const { data: workspace, isLoading } = useActiveWorkspace();
   const { mutate: rename, isPending: isUpdating } = useUpdateWorkspace();
 
-  // Estado que controla el modal
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   // ==============================================
   // Workspace Name Edition
@@ -22,7 +22,6 @@ export const Dashboard = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState('');
 
-  // Sincronizamos el input con el nombre actual al cargar
   useEffect(() => {
     if (workspace) setNewName(workspace.name);
   }, [workspace]);
@@ -39,18 +38,22 @@ export const Dashboard = () => {
   // ======================================
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 p-8 relative">
-      <div className="max-w-7xl mx-auto">
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 border-b border-slate-800 pb-6">
-          <div>
-            <h1 className="text-3xl font-bold text-emerald-400 flex items-center gap-3">
+    /* Delegamos el fondo al App.tsx, pero aseguramos el color de texto y estructura */
+    <div className="min-h-screen text-[#111111] p-6 md:p-10 relative">
+      <div className="max-w-7xl mx-auto animate-in fade-in duration-500">
+        
+        {/* Cabecera Editorial: Borde sólido y espaciado estructurado */}
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 border-b border-[#EAEAE8] pb-6 gap-4">
+          <div className="flex-1">
+            <h1 className="text-3xl md:text-4xl font-bold font-display text-[#111111] flex items-center gap-3 tracking-tight">
               {isLoading ? (
-                <span className="animate-pulse opacity-50">Cargando...</span>
+                <span className="animate-pulse opacity-50 text-[#A1A19A]">Cargando operaciones...</span>
               ) : isEditing ? (
-                <div className="flex items-center gap-2">
+                /* Input como hendidura física para la edición en línea */
+                <div className="flex items-center gap-2 w-full max-w-md">
                   <input
                     autoFocus
-                    className="bg-slate-800 border border-emerald-500 rounded px-2 py-1 text-2xl outline-none"
+                    className="w-full bg-white border border-[#D1D1CD] rounded-xl px-4 py-2 text-2xl font-display font-bold outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all shadow-sm"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                     onBlur={handleRename}
@@ -61,31 +64,30 @@ export const Dashboard = () => {
               ) : (
                 <>
                   {workspace?.name}
+                  {/* Botón de edición: Micro-interacción de color */}
                   <button
                     onClick={() => setIsEditing(true)}
-                    className="text-slate-500 hover:text-emerald-400 transition-colors"
+                    className="text-[#A1A19A] hover:text-brand-primary transition-colors p-2 hover:bg-brand-surface rounded-lg"
                     title="Renombrar Workspace"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                    </svg>
+                    <Edit3 size={20} strokeWidth={2.5} />
                   </button>
                 </>
               )}
             </h1>
-            <p className="text-slate-400 mt-1">
+            <p className="text-[#5A5855] font-medium mt-2 text-sm md:text-base">
               Supervisión de infraestructura y modelos de Machine Learning.
             </p>
           </div>
 
-          {/** Botón para el modal de inviatción
-           *
-           */}
-          <div className="flex gap-4 mt-4 md:mt-0">
+          <div className="flex gap-4 w-full md:w-auto">
+            {/* CTA Principal usando nuestros Design Tokens y tactilidad */}
             <button
               onClick={() => setIsModalOpen(true)}
-              className="mt-4 md:mt-0 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-lg font-medium transition-colors shadow-lg shadow-emerald-900/20">
-              + Nuevo Proyecto
+              className="w-full md:w-auto group flex items-center justify-center gap-2 bg-brand-primary hover:bg-[#D46077] text-white px-6 py-3 rounded-xl font-bold transition-all shadow-sm hover:shadow-md hover:-translate-y-px active:scale-95"
+            >
+              <Plus size={18} className="transition-transform group-hover:rotate-90" />
+              Nuevo Proyecto
             </button>
           </div>
         </header>
@@ -96,15 +98,13 @@ export const Dashboard = () => {
         </main>
       </div>
 
-
-
-      {/* Inyectamos la ventana flotante y pasamos los dos cables de control */}
+      {/* Inyectamos la ventana flotante */}
       <CreateProjectModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
 
-      {/* Nuevo Modal de Invitaciones (Usando la cáscara + el nuevo componente) */}
+      {/* Nuevo Modal de Invitaciones */}
       <Modal
         isOpen={isInviteModalOpen}
         onClose={() => setIsInviteModalOpen(false)}
