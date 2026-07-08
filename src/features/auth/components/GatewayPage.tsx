@@ -3,84 +3,89 @@ import { useAuthStore } from '../../../stores/authStore';
 import { Crown, Wrench, Eye, ArrowRight, LayoutDashboard } from 'lucide-react';
 
 export const GatewayPage = () => {
-  // 1. Extraemos al usuario y la función de anclaje de la tienda
   const user = useAuthStore((state) => state.user);
   const setActiveWorkspaceId = useAuthStore((state) => state.setActiveWorkspaceId);
 
-  // 2. La Maniobra de Salto
   const handleSelectWorkspace = (workspaceId: string, role: string) => {
     setActiveWorkspaceId(workspaceId);
-    
-    // Determinamos el destino exacto basado en el rol de este workspace
-  const targetSector = role.toLowerCase() === 'member' ? 'v-hub' : '/dashboard';
-
-  window.location.href = targetSector;
+    const targetSector = role.toLowerCase() === 'member' ? '/v-hub' : '/dashboard';
+    window.location.href = targetSector;
   };
 
-  // Fallback de seguridad visual
-  if (!user || !user.workspaces) return null; 
+  if (!user || !user.workspaces) return null;
 
-  // 3. Telemetría Visual: Asignamos colores e íconos según el rango
+  // 3. Telemetría Visual: Colores Editoriales Semánticos
   const getRoleVisuals = (role: string) => {
     switch (role.toLowerCase()) {
       case 'owner':
-        return { icon: Crown, color: 'text-amber-500', bg: 'bg-amber-500/10', label: 'Propietario' };
+        // Usa el salmón de la marca
+        return { icon: Crown, iconColor: 'text-role-owner', bg: 'bg-brand-surface', label: 'Propietario', hoverBorder: 'hover:border-role-owner' };
       case 'engineer':
-        return { icon: Wrench, color: 'text-emerald-500', bg: 'bg-emerald-500/10', label: 'Ingeniero' };
+        // Usa el azul pizarra
+        return { icon: Wrench, iconColor: 'text-role-engineer', bg: 'bg-[#4B5E72]/10', label: 'Ingeniero', hoverBorder: 'hover:border-role-engineer' };
       default:
-        return { icon: Eye, color: 'text-blue-500', bg: 'bg-blue-500/10', label: 'Validador' };
+        // Usa el verde salvia
+        return { icon: Eye, iconColor: 'text-role-validator', bg: 'bg-[#6B7A64]/10', label: 'Validador', hoverBorder: 'hover:border-role-validator' };
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#020617] flex flex-col items-center justify-center p-6">
+    /* Lienzo unificado gracias al App.tsx, pero reforzamos la estructura central */
+    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-brand-canvas">
       <div className="w-full max-w-5xl space-y-8 animate-in fade-in duration-500">
         
         {/* Cabecera del Gateway */}
-        <div className="text-center space-y-2">
-          <div className="mx-auto w-16 h-16 bg-slate-800 border border-slate-700 rounded-2xl flex items-center justify-center mb-6 shadow-xl">
-            <LayoutDashboard className="text-emerald-400" size={32} />
+        <div className="text-center space-y-3">
+          <div className="mx-auto w-16 h-16 bg-white border border-[#D1D1CD] rounded-2xl flex items-center justify-center mb-6 shadow-sm">
+            <LayoutDashboard className="text-[#111111]" size={32} />
           </div>
-          <h1 className="text-3xl font-black text-white tracking-tight">Selecciona tu Destino</h1>
-          <p className="text-slate-400">Tienes acceso a múltiples entornos. Elige a dónde deseas navegar.</p>
+          <h1 className="text-3xl md:text-4xl font-bold font-display text-[#111111] tracking-tight">
+            Selecciona tu Destino
+          </h1>
+          <p className="text-[#5A5855] text-sm font-medium max-w-md mx-auto">
+            Tienes acceso a múltiples entornos. Elige el área operativa a la que deseas navegar.
+          </p>
         </div>
 
         {/* Rejilla de Workspaces */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
           {user.workspaces.map((ws) => {
-            const { icon: RoleIcon, color: roleColor, bg: roleBg, label: roleLabel } = getRoleVisuals(ws.role);
+            const { icon: RoleIcon, iconColor, bg: roleBg, label: roleLabel, hoverBorder } = getRoleVisuals(ws.role);
 
             return (
-              // Convertimos la tarjeta en un botón interactivo
+              /* Tarjeta Física Táctil: Sin gradientes. Hover con traslación sutil y borde de marca. */
               <button
                 key={ws.workspace_id}
                 onClick={() => handleSelectWorkspace(ws.workspace_id, ws.role)}
-                className="group text-left block h-full w-full focus:outline-none rounded-xl"
+                className="group text-left block h-full w-full focus:outline-none rounded-2xl transition-all"
               >
-                <div className="bg-slate-800/80 border border-slate-700 rounded-xl p-6 group-hover:border-emerald-500 transition-all shadow-lg flex flex-col h-full cursor-pointer relative overflow-hidden">
+                <div className="bg-white border border-[#EAEAE8] rounded-2xl p-6 hover:border-brand transition-all shadow-sm hover:shadow-lg hover:-translate-y-1 flex flex-col h-full cursor-pointer relative">
                   
-                  {/* Brillo sutil de fondo en hover */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-transparent to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  
-                  <div className="flex-grow relative z-10">
-                    <div className={`w-10 h-10 ${roleBg} rounded-lg flex items-center justify-center mb-4 transition-colors`}>
-                      <RoleIcon className={roleColor} size={20} />
+                  <div className="grow relative z-10">
+                    {/* Contenedor del ícono de rol */}
+                    <div className={`w-12 h-12 ${roleBg} ${hoverBorder || 'border border-transparent'} rounded-xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform`}>
+                      <RoleIcon className={iconColor} size={22} />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-100 mb-1 truncate group-hover:text-emerald-400 transition-colors">
-                      {/* Aquí asumo que tu backend envía un workspace_name. Si no, mostramos un fallback */}
+                    
+                    <h3 className="text-xl font-bold font-display text-[#111111] mb-1 truncate group-hover:text-brand-primary transition-colors">
                       {ws.workspace_name || `Entorno ${ws.workspace_id.split('-')[0]}`}
                     </h3>
-                    <p className="text-slate-400 text-sm mb-4">
-                      Rango: <span className={`font-semibold ${roleColor}`}>{roleLabel}</span>
+                    
+                    <p className="text-[#5A5855] text-xs font-bold uppercase tracking-widest mt-3">
+                      Rango: <span className="text-[#111111]">{roleLabel}</span>
                     </p>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-700 mt-auto flex justify-between items-center text-xs text-slate-500 relative z-10">
-                    <span className="font-mono bg-slate-900 px-2 py-1 rounded">
+                  {/* Pie de la tarjeta: Metadatos estructurados */}
+                  <div className="pt-5 border-t border-[#EAEAE8] mt-6 flex justify-between items-center relative z-10">
+                    <span className="font-sans text-[10px] font-bold text-[#A1A19A] tracking-widest uppercase bg-[#F7F7F5] px-2.5 py-1 rounded-md border border-[#EAEAE8]">
                       ID: {ws.workspace_id.split('-')[0]}
                     </span>
-                    <ArrowRight size={16} className="text-slate-600 group-hover:text-emerald-500 group-hover:translate-x-1 transition-all" />
+                    <div className="w-8 h-8 rounded-full bg-[#F7F7F5] border border-[#EAEAE8] flex items-center justify-center group-hover:bg-brand-primary group-hover:border-brand-primary transition-colors">
+                      <ArrowRight size={14} className="text-[#A1A19A] group-hover:text-white transition-colors" />
+                    </div>
                   </div>
+
                 </div>
               </button>
             );

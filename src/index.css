@@ -9,6 +9,11 @@
   --color-brand-canvas: #fefdfd;
   --color-brand-nav: #fffbfb;
 
+  /* Colores de Roles (Paleta Editorial Mate) */
+  --color-role-owner: var(--color-brand-primary);
+  --color-role-engineer: #4B5E72;
+  --color-role-validator: #6B7A64;
+
   /* Sistema Tipográfico */
   --font-sans: "Inter", sans-serif;
   --font-display: "Figtree", sans-serif;
@@ -26,3 +31,4 @@
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/500.css";
 @import "@fontsource/inter/700.css";
+
