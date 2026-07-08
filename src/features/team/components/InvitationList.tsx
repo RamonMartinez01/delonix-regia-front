@@ -21,7 +21,7 @@ export const InvitationList = ({ invitations }: InvitationListProps) => {
   // Telemetría de diseño: Mapeo de estilos físicos para las tarjetas en tránsito
   const getRoleCardSpecs = (role: string) => {
     switch (role.toLowerCase()) {
-      case 'engineer': 
+      case 'engineer':
         return {
           textColor: 'text-[#4B5E72]',
           borderAccent: 'border-l-4 border-l-[#4B5E72]',
@@ -39,7 +39,7 @@ export const InvitationList = ({ invitations }: InvitationListProps) => {
   return (
     /* Contenedor: Usamos dashed pero con un gris estructurado para denotar "estado pendiente" */
     <section className="bg-white border-2 border-dashed border-[#D1D1CD] rounded-2xl overflow-hidden">
-      
+
       {/* Cabecera: Neutra, eliminamos el italic y aplicamos nuestra tipografía de metadatos */}
       <div className="px-6 py-4 border-b border-dashed border-[#D1D1CD] bg-[#F7F7F5]">
         <h2 className="font-bold text-[#5A5855] flex items-center gap-2.5 text-[10px] uppercase tracking-widest">
@@ -57,26 +57,26 @@ export const InvitationList = ({ invitations }: InvitationListProps) => {
               /* * Tarjeta con Lomo de Dossier: 
                 * Combinamos el border-l-4 con el tinte de fondo para crear la ilusión de un archivo indexado.
                 */
-              <div 
-                key={invite.id} 
+              <div
+                key={invite.id}
                 className={`p-5 ${bgTint} ${borderAccent} border-t border-r border-b border-[#EAEAE8] rounded-r-2xl rounded-l-md flex flex-col gap-3 relative overflow-hidden group hover:border-[#D1D1CD] hover:shadow-sm transition-all`}
               >
-                
+
                 <div className="absolute top-4 right-4">
                   <span className="text-[9px] bg-white text-[#A1A19A] border border-[#EAEAE8] px-2 py-1 rounded-md font-bold uppercase tracking-widest shadow-sm">
                     En espera
                   </span>
                 </div>
-                
+
                 <span className="text-sm font-bold font-display text-[#111111] pr-16 truncate">
                   {invite.email}
                 </span>
-                
+
                 <div className="space-y-1.5 mt-1">
                   <div className="text-[10px] font-bold uppercase tracking-widest text-[#A1A19A]">
                     Rol: <span className={`${textColor} font-black`}>{invite.role}</span>
                   </div>
-                  
+
                   {invite.project_name && (
                     <div className="text-[10px] font-bold uppercase tracking-widest text-[#A1A19A]">
                       Proyecto: <span className="text-[#5A5855] font-semibold">{invite.project_name}</span>
