@@ -1,5 +1,24 @@
 @import "tailwindcss";
 
+/* Design Tokens (Arquitectura Tailwind v4) */
+@theme {
+  /* Colores de Marca */
+  --color-brand-primary: #E6758B;
+  --color-brand-accent: #F3BAC9;
+  --color-brand-surface: #FFF5F7;
+  --color-brand-canvas: #fefdfd;
+  --color-brand-nav: #fffbfb;
+
+  /* Colores de Roles (Paleta Editorial Mate) */
+  --color-role-owner: var(--color-brand-primary);
+  --color-role-engineer: #4B5E72;
+  --color-role-validator: #6B7A64;
+
+  /* Sistema Tipográfico */
+  --font-sans: "Inter", sans-serif;
+  --font-display: "Figtree", sans-serif;
+}
+
 /* Tipografía Display (Figtree) */
 @import "@fontsource/figtree/300.css";
 @import "@fontsource/figtree/400.css";
@@ -12,3 +31,4 @@
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/500.css";
 @import "@fontsource/inter/700.css";
+
