@@ -10,7 +10,6 @@ export const AppLayout = () => {
   const isDashboard = location.pathname === '/dashboard';
 
   return (
-    /* El lienzo maestro del Sector Gamma: Erradicamos el slate-900 */
     <div className="flex h-screen bg-brand-canvas text-[#111111] overflow-hidden font-sans">
       
       <Sidebar />
