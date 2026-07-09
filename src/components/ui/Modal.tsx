@@ -7,27 +7,32 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   children: React.ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl' | '2xl'; // Nueva API para modularidad
 }
 
-export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
+export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalProps) => {
   if (!isOpen) return null;
 
+  // Diccionario de calibres para el ancho
+  const maxWidthClass = {
+    sm: 'max-w-sm',
+    md: 'max-w-md',
+    lg: 'max-w-lg',
+    xl: 'max-w-xl',
+    '2xl': 'max-w-2xl',
+  }[size];
+
   return (
-    /* * Backdrop: Erradicamos el neón oscuro. 
-     * Usamos un gris carbón atenuado con una opacidad controlada.
-     * Mantenemos un fade-in sutil para dar suavidad física al aparecer.
-     */
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#111111]/40 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-6 bg-[#111111]/40 animate-in fade-in duration-200">
       
-      {/* * Contenedor del Modal: Estética de Papel Premium Eleva.
-       * Eliminamos el 'backdrop-blur-xl', el 'bg-slate-900/90' y los glows esmeralda.
-       */}
-      <div className="bg-white border border-[#EAEAE8] w-full max-w-md rounded-2xl shadow-xl overflow-hidden relative animate-in zoom-in-95 duration-200">
+      {/* 1. Inyectamos el ancho dinámico (maxWidthClass).
+        2. flex flex-col y max-h-[90vh] evitan que choque con los bordes de la pantalla.
+      */}
+      <div className={`bg-white border border-[#EAEAE8] w-full mt-8 ${maxWidthClass} rounded-2xl shadow-xl overflow-hidden relative flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200`}>
         
-        {/* Header: Más espaciado y tipografía refinada */}
-        <div className="flex justify-between items-center p-6 border-b border-[#EAEAE8] relative z-10">
+        {/* Header: shrink-0 garantiza que la cabecera jamás colapse ni se desplace */}
+        <div className="flex justify-between items-center p-6 border-b border-[#EAEAE8] shrink-0 bg-white z-20">
           <h2 className="text-lg font-bold font-display text-[#111111] tracking-tight flex items-center gap-2">
-            {/* El acento visual cambia a nuestro token de marca semántico */}
             <div className="w-1 h-4 bg-brand-primary rounded-full" /> 
             {title}
           </h2>
@@ -39,8 +44,8 @@ export const Modal = ({ isOpen, onClose, title, children }: ModalProps) => {
           </button>
         </div>
 
-        {/* Body: Espaciado optimizado para el contenido inyectado */}
-        <div className="p-6 relative z-10 text-[#5A5855] text-sm">
+        {/* Body: overflow-y-auto asume el control del desplazamiento interno */}
+        <div className="p-6 relative z-10 text-[#5A5855] text-sm overflow-y-auto custom-scrollbar">
           {children}
         </div>
 
