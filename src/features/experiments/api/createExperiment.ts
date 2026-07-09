@@ -7,6 +7,7 @@ import type { Experiment } from '../types';
 export interface CreateExperimentDTO {
   name: string;
   model_source_uri: string;
+  task_type?: string;
   hyperparameters?: Record<string, any>;
 }
 
