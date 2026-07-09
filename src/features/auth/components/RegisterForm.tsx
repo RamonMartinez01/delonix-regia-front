@@ -9,6 +9,8 @@ import { UserPlus, ArrowRight, ArrowLeft, Loader2, AlertCircle, ShieldCheck } fr
 export const RegisterForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const [fullName, setFullName] = useState('');
 
   // 1. Revisa si el email existe en la DB
@@ -25,6 +27,14 @@ export const RegisterForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setPasswordError('');
+
+    // Validación de contraseñas
+    if (password !== confirmPassword) {
+      setPasswordError('Las contraseñas no coinciden.');
+      return;
+    }
+
     if (isUpgradeMode) {
       // Caso Azul (ya existe como <member>): Solo necesitamos email y password para el upgrade
       activateMutation.mutate({ email, password });
@@ -62,7 +72,7 @@ export const RegisterForm = () => {
           </div>
         )}
 
-      <div className="space-y-5">
+        <div className="space-y-5">
           <div className="space-y-2">
             <label className="block text-[10px] font-bold uppercase tracking-widest text-[#5A5855] ml-1">Email</label>
             <div className="relative">
@@ -78,7 +88,6 @@ export const RegisterForm = () => {
             </div>
           </div>
 
-          {/* EL CAMALEÓN */}
           {!status?.exists && (
             <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
               <label className="block text-[10px] font-bold uppercase tracking-widest text-[#5A5855] ml-1">Nombre</label>
@@ -106,6 +115,30 @@ export const RegisterForm = () => {
               placeholder="********"
             />
           </div>
+
+          <div className="space-y-2 animate-in slide-in-from-top-2 duration-300">
+            <label className="block text-[10px] font-bold uppercase tracking-widest text-[#5A5855] ml-1">
+              Confirma tu Contraseña
+            </label>
+            <input
+              required
+              type="password"
+              value={confirmPassword}
+              className={`w-full p-3.5 rounded-xl bg-brand-canvas border ${passwordError ? 'border-red-500' : 'border-[#D1D1CD]'} text-[#111111] focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all placeholder:text-[#A1A19A]`}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                if (passwordError) setPasswordError('');
+              }}
+              placeholder="********"
+            />
+            {passwordError && (
+              <p className="text-xs text-red-500 font-medium ml-1 mt-1 flex items-center gap-1 animate-in fade-in">
+                <AlertCircle size={14} />
+                {passwordError}
+              </p>
+            )}
+          </div>
+
         </div>
 
         {/* LA ESCOTILLA DE ESCAPE */}
