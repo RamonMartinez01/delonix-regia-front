@@ -54,7 +54,7 @@ export const ForkExperimentModal = ({ isOpen, onClose, projectId, experimentId, 
           </div>
         </div>
 
-        {/* Alerta de Error: Neutra y controlada */}
+        {/* Alerta de Error */}
         {isError && (
           <div className="p-4 bg-brand-surface border border-brand-accent rounded-xl flex items-center gap-3 text-[#D46077] text-sm font-medium shadow-sm animate-in shake duration-300">
             <AlertCircle size={18} strokeWidth={2.5} />
