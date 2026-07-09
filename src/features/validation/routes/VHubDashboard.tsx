@@ -2,78 +2,85 @@
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { getProjects } from '../../projects/api/getProjects';
+import { ShieldCheck, Inbox, AlertCircle, ArrowRight } from 'lucide-react';
 
 export const VHubDashboard = () => {
-  // Conectamos con el backend usando React Query
   const { data: projects, isLoading, isError } = useQuery({
     queryKey: ['vhub-projects'],
     queryFn: getProjects,
   });
 
   return (
-    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <header className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-100 mb-2">Mis Proyectos Asignados</h2>
-        <p className="text-slate-400">Selecciona un proyecto para acceder a la arena de pruebas y evaluar el modelo.</p>
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-7xl mx-auto">
+      
+      {/* Cabecera Editorial */}
+      <header className="mb-10">
+        <h2 className="text-3xl font-bold font-display text-[#111111] mb-2 tracking-tight">Mis Proyectos Asignados</h2>
+        <p className="text-[#5A5855] font-medium">Selecciona un proyecto para acceder a la arena de pruebas y evaluar el modelo.</p>
       </header>
       
       {/* Estado: Cargando */}
       {isLoading && (
-        <div className="p-12 flex flex-col items-center justify-center text-emerald-500">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-emerald-500 mb-4"></div>
-          <p className="text-slate-400 text-sm">Obteniendo accesos seguros...</p>
+        <div className="p-16 flex flex-col items-center justify-center text-[#5A5855] bg-white border border-[#EAEAE8] rounded-2xl shadow-sm">
+          <div className="w-8 h-8 border-2 border-[#EAEAE8] border-t-brand-primary rounded-full animate-spin mb-4" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-[#A1A19A] animate-pulse">Obteniendo accesos seguros...</span>
         </div>
       )}
 
       {/* Estado: Error */}
       {isError && (
-        <div className="p-6 border border-red-900/50 bg-red-900/20 rounded-xl text-red-400">
-          <p>Hubo un problema al cargar los proyectos. Por favor, intenta de nuevo.</p>
+        <div className="p-6 bg-brand-surface border border-brand-accent rounded-2xl flex items-center gap-3 text-[#D46077] shadow-sm">
+          <AlertCircle size={20} strokeWidth={2.5} />
+          <p className="font-bold text-sm">Hubo un problema de conexión. Por favor, recarga la página e intenta de nuevo.</p>
         </div>
       )}
 
-      {/* Estado: Vacío (Azul no tiene invitaciones) */}
+      {/* Estado: Vacío (Sin asignaciones) */}
       {!isLoading && !isError && projects?.length === 0 && (
-        <div className="p-12 border-2 border-dashed border-slate-800 rounded-xl flex flex-col items-center justify-center text-slate-500 bg-slate-900/20">
-          <div className="text-4xl mb-3">📭</div>
-          <p>Aún no tienes proyectos asignados en este Workspace.</p>
+        <div className="p-16 border-2 border-dashed border-[#D1D1CD] rounded-2xl flex flex-col items-center justify-center text-[#A1A19A] bg-white">
+          <Inbox size={48} strokeWidth={1.5} className="mb-4 text-[#D1D1CD]" />
+          <p className="font-bold font-display text-[#111111] text-lg">Bandeja Vacía</p>
+          <p className="text-[#5A5855] text-sm font-medium mt-1">Aún no tienes proyectos asignados en este espacio de trabajo.</p>
         </div>
       )}
 
-      {/* Estado: Éxito (El Grid de Proyectos VIP) */}
+      {/* Estado: Éxito (El Grid de Proyectos) */}
       {!isLoading && !isError && projects && projects.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map((project) => (
             <Link 
               key={project.id} 
-              to={`/v-hub/project/${project.id}`} // Navegaremos a la Arena de Pruebas
-              className="group relative bg-slate-900 border border-slate-800 rounded-xl p-6 hover:border-emerald-500/50 hover:bg-slate-800/50 transition-all duration-300 flex flex-col h-full"
+              to={`/v-hub/project/${project.id}`}
+              className="group bg-white border border-[#EAEAE8] rounded-2xl p-6 hover:border-[#D1D1CD] transition-all duration-300 shadow-sm hover:shadow-md hover:-translate-y-1 flex flex-col h-full outline-none"
             >
-              {/* Decoración VIP */}
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-500/10 to-transparent rounded-tr-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
               
-              <div className="flex items-center justify-between mb-4 relative z-10">
-                <div className="w-10 h-10 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 font-bold group-hover:text-emerald-400 group-hover:border-emerald-500/30 transition-colors">
+              {/* Encabezado de la Tarjeta */}
+              <div className="flex items-center justify-between mb-5">
+                <div className="w-10 h-10 rounded-xl bg-[#F7F7F5] border border-[#D1D1CD] flex items-center justify-center text-[#111111] font-bold font-display text-lg group-hover:bg-brand-surface group-hover:border-brand-primary group-hover:text-brand-primary transition-colors">
                   {project.name.charAt(0).toUpperCase()}
                 </div>
-                <span className="text-xs font-medium px-2.5 py-1 bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20">
-                  Acceso Concedido
+                
+                {/* Placa de Autorización (Verde Salvia) */}
+                <span className="flex items-center gap-1.5 text-[9px] font-bold px-2.5 py-1.5 bg-role-validator/10 text-role-validator rounded-md border border-role-validator/20 uppercase tracking-widest">
+                  <ShieldCheck size={12} strokeWidth={2.5} /> Acceso Concedido
                 </span>
               </div>
               
-              <h3 className="text-lg font-semibold text-slate-200 mb-2 relative z-10 group-hover:text-white">
+              {/* Cuerpo de la Tarjeta */}
+              <h3 className="text-xl font-bold font-display text-[#111111] mb-2 group-hover:text-brand-primary transition-colors">
                 {project.name}
               </h3>
               
-              {project.description && (
-                <p className="text-slate-400 text-sm line-clamp-2 mb-4 flex-grow relative z-10">
-                  {project.description}
-                </p>
-              )}
+              <p className="text-[#5A5855] text-sm line-clamp-2 mb-6 grow font-medium">
+                {project.description || 'Sin descripción proporcionada.'}
+              </p>
               
-              <div className="mt-auto pt-4 border-t border-slate-800 flex items-center justify-between text-sm text-slate-500 group-hover:text-emerald-500 transition-colors relative z-10">
+              {/* Pie de la Tarjeta (Affordance táctil) */}
+              <div className="mt-auto pt-4 border-t border-[#EAEAE8] flex items-center justify-between text-[11px] font-bold uppercase tracking-widest text-[#A1A19A] group-hover:text-brand-primary transition-colors">
                 <span>Ingresar a evaluación</span>
-                <span className="transform translate-x-0 group-hover:translate-x-1 transition-transform">→</span>
+                <div className="w-6 h-6 rounded-full bg-[#F7F7F5] group-hover:bg-brand-primary flex items-center justify-center transition-colors">
+                  <ArrowRight size={12} strokeWidth={3} className="text-[#A1A19A] group-hover:text-white transition-colors" />
+                </div>
               </div>
             </Link>
           ))}
