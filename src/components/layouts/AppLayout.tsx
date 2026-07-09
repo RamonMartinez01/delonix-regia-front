@@ -3,8 +3,6 @@ import { Outlet, useLocation, Link } from 'react-router-dom';
 import { Sidebar } from '../../widgets/Sidebar';
 import { useActiveWorkspace } from '../../features/workspaces/api/useActiveWorkspace';
 
-// src/components/layouts/AppLayout.tsx
-
 export const AppLayout = () => {
   const location = useLocation();
   const { data: activeWorkspace, isLoading } = useActiveWorkspace();
@@ -12,44 +10,51 @@ export const AppLayout = () => {
   const isDashboard = location.pathname === '/dashboard';
 
   return (
-    <div className="flex h-screen bg-[#020617] text-slate-200 overflow-hidden">
+    /* El lienzo maestro del Sector Gamma: Erradicamos el slate-900 */
+    <div className="flex h-screen bg-brand-canvas text-[#111111] overflow-hidden font-sans">
+      
       <Sidebar />
 
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden transition-all duration-300">
         
-        {/* El Header ahora es PERMANENTE */}
-        <header className="h-16 border-b border-slate-800/60 flex items-center px-8 bg-slate-950/20 backdrop-blur-md z-10">
+        {/* 
+          * Header Editorial Permanente: 
+          * Adiós al `backdrop-blur-md` y al fondo translúcido.
+          * Hola a la solidez del papel impreso (`bg-white`) con un límite claro (`border-[#EAEAE8]`).
+          */}
+        <header className="h-16 border-b border-[#EAEAE8] flex items-center px-8 bg-white z-10">
           <div className="flex items-center gap-3">
             {isDashboard ? (
-              // Vista para el DASHBOARD
-              <div className="flex items-center gap-2 animate-in slide-in-from-left duration-500">
-                <div className="w-2 h-2 rounded-full bg-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.2)]" />
-                <span className="text-sm font-semibold text-slate-400 tracking-wide uppercase">
+              // Vista pasiva: Indicador apagado/neutro
+              <div className="flex items-center gap-2.5 animate-in slide-in-from-left duration-500">
+                <div className="w-2 h-2 rounded-full bg-[#A1A19A]" />
+                <span className="text-[10px] font-bold text-[#5A5855] tracking-widest uppercase mt-0.5">
                   Tu Espacio de Operaciones
                 </span>
               </div>
             ) : (
-              // Vista para el RESTO DE RUTAS (Team, Project Detail, etc)
+              // Vista activa/navegable: Indicador vivo con nuestro color de marca
               <Link
                 to="/dashboard"
-                className="group flex items-center gap-2 hover:opacity-80 transition-all animate-in fade-in duration-300"
+                className="group flex items-center gap-2.5 transition-all animate-in fade-in duration-300"
               >
-                <div className={`w-2 h-2 rounded-full shadow-[0_0_8px_rgba(16,185,129,0.6)] 
-                  ${isLoading ? 'bg-slate-600 animate-pulse' : 'bg-emerald-500'}`}
+                <div className={`w-2 h-2 rounded-full transition-colors 
+                  ${isLoading ? 'bg-[#EAEAE8] animate-pulse' : 'bg-brand-primary'}`}
                 />
-                <span className="text-sm font-bold text-slate-300 group-hover:text-emerald-400 tracking-wide uppercase">
+                <span className="text-[10px] font-bold text-[#5A5855] group-hover:text-[#111111] tracking-widest uppercase transition-colors mt-0.5">
                   {isLoading ? 'Sincronizando...' : activeWorkspace?.name || 'Workspace'}
                 </span>
               </Link>
             )}
 
-            <span className="text-slate-800 mx-2">|</span>
-            
+            {/* Separador físico sutil */}
+            <span className="text-[#EAEAE8] mx-2">|</span>
             
           </div>
         </header>
         
-        <div className="flex-1 overflow-y-auto relative z-0 custom-scrollbar">
+        {/* Contenedor fluido para las vistas hijas */}
+        <div className="flex-1 overflow-y-auto relative z-0 custom-scrollbar bg-brand-canvas">
           <Outlet />
         </div>
       </main>

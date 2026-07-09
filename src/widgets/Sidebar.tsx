@@ -46,9 +46,8 @@ export const Sidebar = () => {
   // Selección del menú a renderizar
   const activeMenuItems = isVHub ? deltaMenu : gammaMenu;
 
-  // Función de ejecución final
+  // Función de ejecución final (Logout)
   const confirmLogout = () => {
-
     logoutMutation.mutate()
     setIsLogoutModalOpen(false);
   };
@@ -56,23 +55,24 @@ export const Sidebar = () => {
   return (
     <>
       <aside
-        className={`bg-slate-900 border-r border-slate-800 transition-all duration-300 flex flex-col
-      ${isSidebarOpen ? 'w-64' : 'w-20'}`}
+       /* 1. Transformación Estructural: Papel sólido, borde limpio, sin sombras flotantes */
+        className={`bg-white border-r border-[#EAEAE8] transition-all duration-300 flex flex-col relative z-20
+        ${isSidebarOpen ? 'w-64' : 'w-20'}`}
       >
         {/* Header de la Sidebar */}
-        <div className="p-4 flex items-center justify-between border-b border-slate-800 h-16">
+        <div className="p-4 flex items-center justify-between border-b border-[#EAEAE8] h-16">
           {isSidebarOpen && (
           // Transformamos el span en un Link interactivo
           <Link 
             to="/" 
-            className="font-bold text-emerald-500 tracking-wider hover:text-emerald-400 transition-colors"
+            className="font-black font-display text-xl text-[#111111] tracking-tighter hover:text-brand-primary transition-colors"
           >
             DELONIX
           </Link>
         )}
           <button
             onClick={toggleSidebar}
-            className="p-1 hover:bg-slate-800 rounded-md text-slate-400 transition-colors"
+            className="p-1.5 hover:bg-[#F7F7F5] rounded-lg text-[#A1A19A] hover:text-[#111111] transition-colors"
           >
             {isSidebarOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
           </button>
@@ -85,10 +85,10 @@ export const Sidebar = () => {
               to={item.path}
               end={item.path === '/dashboard' || item.path === '/v-hub'}
               className={({ isActive }) => `
-              flex items-center gap-3 px-3 py-2 rounded-lg transition-all
+              flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all font-medium text-sm
               ${isActive
-                  ? 'bg-emerald-500/10 text-emerald-400 font-medium'
-                  : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'}
+                  ? 'bg-brand-surface text-brand-primary font-bold'
+                  : 'text-[#5A5855] hover:bg-[#F7F7F5] hover:text-[#111111]'}
             `}
             >
               <item.icon size={22} className="shrink-0" />
@@ -98,18 +98,18 @@ export const Sidebar = () => {
         </nav>
 
         {/* Footer: Perfil del Usuario */}
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-[#EAEAE8] space-y-1.5">
           <NavLink
             to={profileRoute}
             className={({ isActive }) => `
-            flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
+            flex items-center gap-3 px-3 py-2 rounded-lg transition-all font-medium text-sm
             ${isActive
-                ? 'bg-emerald-500/10 text-emerald-400 font-medium'
-                : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'}
+                ? 'bg-brand-surface text-brand-primary font-bold'
+                : 'text-[#5A5855] hover:bg-[#F7F7F5] hover:text-[#111111]'}
           `}
           >
-            <UserCircle size={22} />
-            {isSidebarOpen && <span className="text-sm truncate">Mi Perfil</span>}
+            <UserCircle size={20} strokeWidth={2} />
+            {isSidebarOpen && <span className="truncate">Mi Perfil</span>}
           </NavLink>
 
           {/* El Botón activa el Modal Logout */}
@@ -117,13 +117,13 @@ export const Sidebar = () => {
             onClick={() => setIsLogoutModalOpen(true)}
             disabled={logoutMutation.isPending}
             className={`
-            w-full flex items-center gap-3 px-3 py-2 rounded-lg transition-colors
-            text-slate-400 hover:bg-rose-500/10 hover:text-rose-400 disabled:opacity-50
+            w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors font-medium text-sm
+          text-[#5A5855] hover:bg-brand-surface hover:text-[#D46077] disabled:opacity-50
             ${!isSidebarOpen ? 'justify-center' : ''}
           `}
             title="Cerrar Sesión"
           >
-            <LogOut size={22} className={logoutMutation.isPending ? 'animate-pulse' : ''} />
+            <LogOut size={20} strokeWidth={2} className={logoutMutation.isPending ? 'animate-pulse' : ''} />
             {isSidebarOpen && <span className="text-sm truncate">Cerrar Sesión</span>}
           </button>
 
@@ -136,25 +136,26 @@ export const Sidebar = () => {
         >
           <div className="space-y-6">
             <div className="flex flex-row items-center  gap-4">
-              <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 shrink-0">
-                <LogOut size={24} />
+              <div className="p-3 bg-brand-surface border border-brand-accent rounded-xl text-[#D46077] shrink-0 shadow-sm">
+                <LogOut size={24} strokeWidth={2.5}/>
               </div>
-              <p className="text-slate-300 text-sm leading-relaxed mt-1">
-                Estás a punto de salir de la interfaz <span className="font-semibold text-white">Delonix</span>.
+              <p className="text-[#5A5855] text-sm leading-relaxed mt-1 font-medium">
+                Estás a punto de salir de la interfaz <span className="font-bold text-[#111111]">Delonix</span>.
 
               </p>
             </div>
 
-            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-5 border-t border-slate-700/60">
+            <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 pt-5 border-t border-[#EAEAE8]">
+              {/* Botones de acción con peso estructural correcto */}
               <button
                 onClick={() => setIsLogoutModalOpen(false)}
-                className="px-5 py-2.5 font-medium text-slate-400 bg-transparent border border-slate-700 hover:border-emerald-500/50 hover:bg-emerald-500/10 hover:text-emerald-400 rounded-xl transition-all active:scale-95"
+                className="px-5 py-2.5 font-bold text-[#111111] bg-white border border-[#D1D1CD] hover:bg-[#F7F7F5] rounded-xl transition-all active:scale-95 shadow-sm"
               >
                 Regresar
               </button>
               <button
                 onClick={confirmLogout}
-                className="px-5 py-2.5 font-medium text-rose-400 bg-rose-500/10 border border-rose-500/20 hover:bg-rose-500/20 hover:text-rose-300 hover:border-rose-500/40 rounded-xl transition-all active:scale-95 shadow-[0_0_15px_rgba(244,63,94,0.05)]"
+                className="px-5 py-2.5 font-bold text-white bg-[#D46077] hover:bg-[#B34D61] border-none rounded-xl transition-all active:scale-95 shadow-sm"
               >
                 Sí, salir
               </button>
