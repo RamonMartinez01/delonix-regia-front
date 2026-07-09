@@ -1,8 +1,8 @@
 # Delonix - Frontend
 
-This repository contains the frontend application for Delonix Regia, a B2B SaaS platform designed for Machine Learning Model User Acceptance Testing (UAT) and deployment monitoring. 
+This repository contains the frontend application for **Delonix**, a B2B SaaS platform designed for Machine Learning Model User Acceptance Testing (UAT) and deployment monitoring. 
 
-The interface facilitates the workflow between ML engineers managing models and stakeholders validating them through a structured feedback loop (Data Flywheel).
+The interface facilitates the workflow between ML engineers managing models and stakeholders, validating them through a structured feedback loop (Data Flywheel).
 
 ## Tech Stack
 
