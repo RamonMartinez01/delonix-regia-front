@@ -82,7 +82,7 @@ export const ForkExperimentModal = ({ isOpen, onClose, projectId, experimentId, 
             >
               <Brain size={18} strokeWidth={2.5} className={`mb-2.5 ${forkType === 'fine_tuning' ? 'text-role-validator' : 'text-[#A1A19A]'}`} />
               <span className={`block text-sm font-bold font-display mb-1 transition-colors ${forkType === 'fine_tuning' ? 'text-[#111111]' : 'text-[#5A5855]'}`}>
-                Ajuste Fino
+                Fine Tuning
               </span>
               <span className="text-[11px] font-medium leading-normal block opacity-90 text-[#5A5855]">
                 Continúa entrenando optimizando los pesos matemáticos del ancestro.
@@ -122,7 +122,7 @@ export const ForkExperimentModal = ({ isOpen, onClose, projectId, experimentId, 
             value={evolutionNotes}
             onChange={(e) => setEvolutionNotes(e.target.value)}
             className="w-full bg-[#F7F7F5] border border-[#D1D1CD] rounded-xl px-4 py-3 text-[#111111] font-medium focus:outline-none focus:bg-white focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-all shadow-inner focus:shadow-sm resize-none text-sm leading-relaxed"
-            placeholder="Ej: Se requiere ajuste fino porque el modelo base presenta falsos positivos en el set de datos del municipio..."
+            placeholder="Ej: Se requiere Fine Tuning porque el modelo base presenta falsos positivos en el set de datos del municipio..."
           />
         </div>
 
